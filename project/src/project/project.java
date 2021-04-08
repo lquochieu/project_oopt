@@ -41,6 +41,7 @@ import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
 import org.graphstream.stream.file.FileSinkImages.OutputPolicy;
 import org.graphstream.stream.file.FileSinkImages.OutputType;
 import org.graphstream.stream.file.images.Resolutions;
+import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 import org.graphstream.ui.view.camera.Camera;
@@ -49,9 +50,11 @@ import org.graphstream.ui.view.camera.Camera;
 
 
 public class project {
-	private static String[] v;
+	private static OnMyWay omg;
 	private static DFS g;
+	
 	private static Graph graph;
+	private static String[] v;
 	private static int[][] allIntArr;
 	private static String[] arrOfStr;
 	private static int max = 0; // file index of the last vertex
@@ -59,10 +62,12 @@ public class project {
 	private static Integer[] c;
 	private static int size;
 	private static JFrame frame = new JFrame();
+	private static JPanel buttonJPanel;
 	
 	public static void main(String args[]) throws IOException {
 		
         prepare();
+        
         console();
         
         
@@ -70,26 +75,37 @@ public class project {
 	}
 	
 	public static void console() {
-		JPanel buttonJPanel = new JPanel();
+		
         JButton showButton = new JButton("Bai 1");
         JButton AllPAthButton = new JButton("Bai 2");
+        JButton QuestionsPathButton = new JButton("Bai 3");
+        
+        buttonJPanel = new JPanel();
         buttonJPanel.add(showButton);
         buttonJPanel.add(AllPAthButton);
+        buttonJPanel.add(QuestionsPathButton);
         buttonJPanel.setBackground(Color.orange);
         
-        setLabel();
+        setLabel(frame);
         
         frame.setPreferredSize(new Dimension(500, 500));
         frame.getContentPane().add(buttonJPanel, BorderLayout.SOUTH);
         frame.setTitle("Project OOPT");
         frame.setForeground(Color.YELLOW);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        getView(frame);
         showButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ShowGraph(graph);
+				
+				try {
+					g.graphString("Bai1");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 			}
 		});
@@ -99,8 +115,17 @@ public class project {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				
+				g.runDFS(1, max, "Bai2");
 				AllPathButton();
+				
+			}
+		});
+        
+        QuestionsPathButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
 				
 			}
 		});
@@ -108,17 +133,11 @@ public class project {
         frame.setVisible(true);
 	}
 	
-	public static void setLabel() {
+	public static void setLabel(JFrame frame) {
 		JLabel showGraphLabel = new JLabel("Welcome to our graph");
         showGraphLabel.setFont(new Font("Helvetica", Font.PLAIN, 30));
-        FontMetrics fm = showGraphLabel.getFontMetrics(showGraphLabel.getFont());
-        TextLayout layout = new TextLayout(showGraphLabel.getText(), showGraphLabel.getFont(), fm.getFontRenderContext());
-        Rectangle2D bounds = layout.getBounds();
-        Dimension d = showGraphLabel.getPreferredSize();
-        d.height = (int) (bounds.getHeight() + 200);
-        d.width = (int) (bounds.getWidth() + 150);
         showGraphLabel.setForeground(Color.RED);
-        showGraphLabel.setPreferredSize(d);
+        
         showGraphLabel.setHorizontalAlignment(SwingConstants.CENTER);
       
         frame.add(showGraphLabel, BorderLayout.NORTH);
@@ -133,7 +152,7 @@ public class project {
 			vPanel.add(vButtons[i]);
 		}
 		
-		vPanel.setBackground(Color.ORANGE);
+		vPanel.setForeground(Color.GREEN);
 		
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 		AllPathFrame.setPreferredSize(new Dimension(500, 500));
@@ -144,9 +163,10 @@ public class project {
 				AllPathFrame.dispose();
 			}
 		});
-		
+		setLabel(AllPathFrame);
 		AllPathFrame.pack();
 		AllPathFrame.setVisible(true);
+		getView(AllPathFrame);
 		c = new Integer[max + 1];
 		
 		for(int i = 0; i < max; ++i) {
@@ -183,7 +203,7 @@ public class project {
 					for(int i = 1; i <= max; ++i) {
 						for(int j = 1; j <= max; ++j) {
 							if(c[i1] == 1 && c[i2] == 1) {
-								g.runDFS(i1 , i2 );
+								g.runDFS(i1 , i2, "path between vertex " + i1 + " and vertex " +i2 );
 								c[i1] = 0;
 								c[i2] = 0;
 							}
@@ -196,7 +216,7 @@ public class project {
 	}
 	
 	
-	public static void prepare() {
+	public static void prepare() throws IOException {
 		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Project");
 		graph.setStrict(false);
@@ -239,7 +259,6 @@ public class project {
         catch(Exception e) {
             e.getStackTrace();
         }
-        System.out.println("Data in the stream:");
         size = listOfLines.size();
         
         
@@ -265,20 +284,22 @@ public class project {
         		max = allIntArr[i][arrOfStrlength - 1];
         	
         }
+        
+        
+        
+        
         //Max is the numbers of node of graph
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
         g = new DFS(max);
         for (int i = 0; i < size; i++) {
-        	for (int j = 1; j < allIntArr[i].length; j++) {
+
+        	for (int j = 0; j < allIntArr[i].length; j++) {
         		g.addEdge(allIntArr[i][0], allIntArr[i][j]);
         	}
         }
-	}
-	
-	public static void ShowGraph(Graph graph) {
-		Node[] e = new Node[max];
+        Node[] e = new Node[max];
         for(int i = 0; i < max; ++i) {
 
         	graph.addNode(Integer.toString(i+1));
@@ -286,9 +307,26 @@ public class project {
         	e[i].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
     		e[i].setAttribute("ui.label", Integer.toString(i+1)); 
         }
-        graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
-
+        omg = new OnMyWay(max);
+        for (int i = 0; i < size; i++) {
+        	for (int j = 0; j < allIntArr[i].length; j++) {
+        		omg.addEdge(allIntArr[i][0], allIntArr[i][j]);
+        	}
+        }
+		try {
+			omg.runner();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 	}
+	public static void getView(JFrame frame) {
+    	SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        viewer.enableAutoLayout();
+        JPanel view = (JPanel) viewer.addDefaultView(false);
+        frame.getContentPane().add(view);
+    }
+	
 	
 
 }
