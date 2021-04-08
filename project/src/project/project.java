@@ -126,7 +126,12 @@ public class project {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				
+				try {
+					omg.runner();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
         frame.pack();
@@ -292,13 +297,7 @@ public class project {
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
-        g = new DFS(max);
-        for (int i = 0; i < size; i++) {
-
-        	for (int j = 0; j < allIntArr[i].length; j++) {
-        		g.addEdge(allIntArr[i][0], allIntArr[i][j]);
-        	}
-        }
+     
         Node[] e = new Node[max];
         for(int i = 0; i < max; ++i) {
 
@@ -313,12 +312,7 @@ public class project {
         		omg.addEdge(allIntArr[i][0], allIntArr[i][j]);
         	}
         }
-		try {
-			omg.runner();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		
 	}
 	public static void getView(JFrame frame) {
     	SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);

@@ -31,8 +31,7 @@ public class OnMyWay extends GraphLinkedList{
 		System.out.println("--------------------------------");
 		Scanner sc;
     	while (true) {
-    		graphDraw();
-        	graph.display().getGraphicGraph();
+    		graphString("Bai3");
     		sc = new Scanner(System.in);
     		System.out.println("--------------------------------");
     		System.out.println("Please choose a number: 0-1-2");

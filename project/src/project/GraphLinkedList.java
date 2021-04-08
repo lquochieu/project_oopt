@@ -48,18 +48,16 @@ public class GraphLinkedList {
 		System.out.println(adjLists[src].size());
 	}
 	void graphDraw() {
+		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Use");
 		for (int i = 1; i <= vertices; ++i) {
 			graph.addNode(Integer.toString(i));
 		}
 		for (int i = 1; i <= vertices; ++i) {
 			String iString = Integer.toString(i);
-			System.out.println(adjLists[i].size());
 			if (adjLists[i].size() > 0) {
-				for (int j = 1; j <= adjLists[i].size(); ++j) {
-					
+				for (int j: adjLists[i])
 					graph.addEdge(iString + " " + Integer.toString(j), iString, Integer.toString(j), true);
-				}
 			}
 			v[i] = graph.getNode(iString);
 		}
