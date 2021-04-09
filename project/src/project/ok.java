@@ -47,7 +47,7 @@ class ok {
         try {
             //doc file text theo dong
             reader = new BufferedReader(new FileReader(
-                    "C:\\Users\\Administrator\\IdeaProjects\\graph.txt"));
+                    "output.txt"));
             String line = reader.readLine();
 
 
@@ -128,7 +128,7 @@ class ok {
 
         pic.setLayoutPolicy(FileSinkImages.LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);
         try {
-            pic.writeAll(graph, "C:\\Users\\Administrator\\IdeaProjects\\graph\\path" +Integer.toString(count)+".png");
+            pic.writeAll(graph, "D:\\TTH\\app code\\Visual Studio\\Java\\Java_Eclipse\\project_oopt\\project\\pic_graph\\" + Integer.toString(count)+".png");
         } catch (IOException e) {
             // TODO: handle exception
             e.printStackTrace();
@@ -146,7 +146,7 @@ class ok {
 
     //dfs tu dinh p
     public void dfs(String p){
-        int mutex=1;
+       
         //neu dinh p co it nhat 1 canh ke:
         graph.setAttribute("ui.quality");
         graph.setAttribute("ui.antialias");

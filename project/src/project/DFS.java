@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.JOptionPane;
 import javax.swing.text.View;
 
 import org.graphstream.graph.Edge;
@@ -35,8 +36,6 @@ public class DFS extends GraphLinkedList{
 	    	graph = new SingleGraph("Use");
 	    	graphDraw();
 	    	count++;
-	    	for (int i:stack)
-		    	System.out.print(i + " ");
 	    	for (int i = 0; i < stack.size(); ++i) {
 	    		
 	    		//take the node
@@ -81,7 +80,7 @@ public class DFS extends GraphLinkedList{
     void runDFS(int vertex, int end) {
     	runDFS(vertex, end, true);
     	if (count == 0){
-    		System.out.println("No path!");
+    		JOptionPane.showMessageDialog(null, "No path!", null, JOptionPane.INFORMATION_MESSAGE);
     	} 
     	//empty the stack here
     	stack.clear();

@@ -50,7 +50,7 @@ import org.graphstream.ui.view.camera.Camera;
 
 
 public class project {
-	private static OnMyWay omg;
+	private static OnMyWay omw;
 	private static DFS g;
 	
 	private static Graph graph;
@@ -58,7 +58,7 @@ public class project {
 	private static int[][] allIntArr;
 	private static String[] arrOfStr;
 	private static int max = 0; // file index of the last vertex
-	private static int i1, i2, x = 0, y = 0, a = 0;
+	private static int i1, i2, i3 = 0, x = 0, y = 0, a = 0;
 	private static Integer[] c;
 	private static int size;
 	private static JFrame frame = new JFrame();
@@ -67,7 +67,7 @@ public class project {
 	public static void main(String args[]) throws IOException {
 		
         prepare();
-        
+        c = new Integer[max + 1];
         console();
         
         
@@ -88,7 +88,7 @@ public class project {
         
         setLabel(frame);
         
-        frame.setPreferredSize(new Dimension(500, 500));
+        frame.setPreferredSize(new Dimension(500, 550));
         frame.getContentPane().add(buttonJPanel, BorderLayout.SOUTH);
         frame.setTitle("Project OOPT");
         frame.setForeground(Color.YELLOW);
@@ -125,19 +125,15 @@ public class project {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				try {
-					omg.runner();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
+				QuestionsPath();
+							}
 		});
         frame.pack();
         frame.setVisible(true);
 	}
 	
+	
+
 	public static void setLabel(JFrame frame) {
 		JLabel showGraphLabel = new JLabel("Welcome to our graph");
         showGraphLabel.setFont(new Font("Helvetica", Font.PLAIN, 30));
@@ -147,6 +143,82 @@ public class project {
       
         frame.add(showGraphLabel, BorderLayout.NORTH);
 	}
+	
+	protected static void QuestionsPath() {
+		// TODO Auto-generated method stub
+		JFrame AllPathFrame = new JFrame();
+		JPanel vPanel = new JPanel();
+		JButton[] vButtons = new JButton[max];
+		for(int i = 0; i < max; ++i) {
+			vButtons[i] = new JButton(Integer.toString(i+1));
+			vPanel.add(vButtons[i]);
+		}
+		JButton backButton = new JButton("Back");
+		JButton clearButton = new JButton("Clear");
+		
+		vPanel.add(backButton);
+		vPanel.add(clearButton);
+		vPanel.setForeground(Color.GREEN);
+		
+		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+		AllPathFrame.setPreferredSize(new Dimension(550, 550));
+		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		AllPathFrame.addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent windowEvent) {
+				AllPathFrame.dispose();
+			}
+		});
+		setLabel(AllPathFrame);
+		AllPathFrame.pack();
+		AllPathFrame.setVisible(true);
+		getView(AllPathFrame);
+		for(int i = 0; i < max; ++i) {
+			vButtons[i].addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					for(int i = 1; i <= max; ++i) {
+						if(e.getActionCommand().equals(Integer.toString(i))) {
+							try {
+								i3 = i;
+								omw.addOption(1, i3);
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+				}
+			});
+		}
+		
+		backButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				try {
+					omw.addOption(0, i3);
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		
+		clearButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				omw.clear();
+			}
+		});
+	}
+	
+	
 	public static void AllPathButton() {
 		// TODO Auto-generated method stub
 		JFrame AllPathFrame = new JFrame();
@@ -172,7 +244,7 @@ public class project {
 		AllPathFrame.pack();
 		AllPathFrame.setVisible(true);
 		getView(AllPathFrame);
-		c = new Integer[max + 1];
+		
 		
 		for(int i = 0; i < max; ++i) {
 			c[i + 1] = 0;
@@ -227,9 +299,9 @@ public class project {
 		graph.setStrict(false);
 		graph.setAutoCreate( true );
         String data = "1 2 3\n"
-        		+ "2 5 4\n"
-        		+ "4 3 5 6";
-
+        		+ "2 5 6 4\n"
+        		+ "4 3 5 6 8 7";
+        
         try {
             // Creates a Writer using FileWriter
             Writer output = new FileWriter("output.txt");
@@ -281,23 +353,36 @@ public class project {
         	}
         	for (int j = 1; j < arrOfStrlength; j++) {
         			graph.addEdge(arrOfStr[0] + arrOfStr[j], arrOfStr[0], arrOfStr[j], true);
+        			
         	        		
         	}
-        	
+        	for (int j = 0; j < arrOfStrlength; j++) {
+        		if (max < allIntArr[i][j])
+            		max = allIntArr[i][j];
+        	}
         	//find max
-        	if (max < allIntArr[i][arrOfStrlength - 1])
-        		max = allIntArr[i][arrOfStrlength - 1];
+        	
         	
         }
-        
-        
-        
+        g = new DFS(max);
+        for (int i = 0; i < size; i++) {
+        	for (int j = 1; j < allIntArr[i].length; j++) {
+        		g.addEdge(allIntArr[i][0], allIntArr[i][j]);
+        	}
+        }
         
         //Max is the numbers of node of graph
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
-     
+        omw = new OnMyWay(max);
+        for (int i = 0; i < size; i++) {
+        	for (int j = 1; j < allIntArr[i].length; j++) {
+        		omw.addEdge(allIntArr[i][0], allIntArr[i][j]);
+        	}
+        }
+        omw.runner();
+        
         Node[] e = new Node[max];
         for(int i = 0; i < max; ++i) {
 
@@ -306,13 +391,7 @@ public class project {
         	e[i].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
     		e[i].setAttribute("ui.label", Integer.toString(i+1)); 
         }
-        omg = new OnMyWay(max);
-        for (int i = 0; i < size; i++) {
-        	for (int j = 0; j < allIntArr[i].length; j++) {
-        		omg.addEdge(allIntArr[i][0], allIntArr[i][j]);
-        	}
-        }
-		
+        
 	}
 	public static void getView(JFrame frame) {
     	SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);

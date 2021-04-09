@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+
+import javax.swing.JOptionPane;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
@@ -14,66 +17,65 @@ import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 public class OnMyWay extends GraphLinkedList{
 
 	private int place = 1;
+	private int prePlace = 0;
+	private String command;
 	private Scanner scanner;
+	private Scanner sc;
+	private Iterator<Integer> ite;
+	private Edge edge;
+	private String a;
+	private String b;
 	OnMyWay(int vertices) {
 		super(vertices);
 		// TODO Auto-generated constructor stub
 	}
 	
-	void runner() throws IOException {
-    	
-    	String command = new String();
-    	System.out.println("Order Management Application: ");
-		System.out.println("--------------------------------");
-		System.out.println("1. Step Forward");
-		System.out.println("2. Step Back");
-		System.out.println("0. Stop");
-		System.out.println("--------------------------------");
-		Scanner sc;
-    	while (true) {
-    		graphString("Bai3");
-    		sc = new Scanner(System.in);
-    		System.out.println("--------------------------------");
-    		System.out.println("Please choose a number: 0-1-2");
-
-        	command = sc.next();
-    		
-    		if (command.equals("0")) {
-    			System.out.println("Bye my friend, see you later!");
-    			sc.close();
-    			break;
-    		}
-    		
-    		else if (command.equals("1")) {
-    			stepForward();
-    		}
-    		
-    		else if (command.equals("2")) {
-    			stepBack();
-    		}
-    		else 
-    			System.out.println("Illegal command!");
-    		
-    	}
+	void runner() throws NoSuchElementException, IOException {
+		graph = new SingleGraph("Use");
+    	graphDraw();
+	}
+	
+	void clear() {
+		for(int i = 1; i <= vertices; ++i) {
+			visited[i] = false;
+		}
+		stack.clear();
+		graph = new SingleGraph("Use");
+    	graphDraw();
+    	graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
+	}
+	void addOption(int i, int pl) throws IOException {
+		if(stack.size() > 0) {
+			prePlace = place;
+		}
+		
+		if(i ==1 ) {
+			place = pl;
+			stepForward();
+			
+		}
+		else {
+			if(stack.size() == 0) {
+				return;
+			}
+			place =stack.get(stack.size() -1);
+			stepBack();
+			graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
+		}
 	}
 	
 	private void stepForward() {
-		scanner = new Scanner(System.in);
+		
 		if (stack.size() == 0) {
-			System.out.print("Choose your place: ");
-			do {
-				place = scanner.nextInt();
-				if ((place < 1) || (place > vertices)) {
-					System.out.print("Warning! Choose a different place: ");
-				}
-			} while ((place < 1) || (place > vertices));
 			stack.add(place);
+			System.out.println(place);
 			visited[place] = true;
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
+			graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 		}
 		else {
-			Iterator<Integer> ite = adjLists[place].listIterator();
+			ite = adjLists[prePlace].listIterator();
 			int countemp = 0;
 		    while (ite.hasNext()) {
 		        int adj = ite.next();
@@ -81,15 +83,11 @@ public class OnMyWay extends GraphLinkedList{
 		        	countemp = 1;
 		    }
 		    if (countemp == 0)
-		    	System.out.println("Sorry, there is not no way to choose!");
+		    	JOptionPane.showMessageDialog(null, "Sorry, there is not no way to choose!", null, JOptionPane.INFORMATION_MESSAGE);
 		    else {
-		    	System.out.print("Choose your destination: ");
-				do {
-					place = scanner.nextInt();
 					if ((visited[place]) || !isAdjacent(stack.get(stack.size()-1), place)) {
-						System.out.print("Warning! Choose a different destination: ");
+						return;
 					}
-				} while ((visited[place]) || !isAdjacent(stack.get(stack.size()-1), place));
 				stack.add(place);
 				visited[place] = true;
 				v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
@@ -98,23 +96,28 @@ public class OnMyWay extends GraphLinkedList{
 	    		String b = Integer.toString(stack.get(stack.size() - 1));
 	    		Edge edge=graph.getEdge(a + " " + b);
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
+	    		graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 		    }
 		}
 	}
 	
 	private void stepBack() {
+		
 		if (stack.size() > 1) {
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
-			String a = Integer.toString(stack.get(stack.size() - 2));
-			String b = Integer.toString(stack.get(stack.size() - 1));
-			Edge edge=graph.getEdge(a + " " + b);
+			a = Integer.toString(stack.get(stack.size() - 2));
+			b = Integer.toString(stack.get(stack.size() - 1));
+			edge=graph.getEdge(a + " " + b);
 			edge.setAttribute("ui.style", "fill-color: black; size: 0.8px;");
 			visited[place] = false;
 			stack.remove(stack.size() - 1);
+			System.out.println(place);
 			place = stack.get(stack.size() - 1);
 		}
 		else {
+			visited[place] = false;
+			stack.clear();
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
 		}

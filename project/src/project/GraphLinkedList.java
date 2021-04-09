@@ -1,5 +1,6 @@
 package project;
 
+import java.awt.desktop.SystemSleepEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -45,7 +46,7 @@ public class GraphLinkedList {
 	// Add edges
 	void addEdge(int src, int dest) {
 		adjLists[src].add(dest);
-		System.out.println(adjLists[src].size());
+
 	}
 	void graphDraw() {
 		System.setProperty("org.graphstream.ui", "swing");
