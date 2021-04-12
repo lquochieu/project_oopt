@@ -63,6 +63,9 @@ public class project {
 	private static int size;
 	private static JFrame frame = new JFrame();
 	private static JPanel buttonJPanel;
+	private static SwingViewer viewer;
+	private static JPanel view;
+	private static ArrayList<Integer> vertex = new ArrayList<Integer>();
 	
 	public static void main(String args[]) throws IOException {
 		
@@ -79,6 +82,7 @@ public class project {
         JButton showButton = new JButton("Bai 1");
         JButton AllPAthButton = new JButton("Bai 2");
         JButton QuestionsPathButton = new JButton("Bai 3");
+        
         
         buttonJPanel = new JPanel();
         buttonJPanel.add(showButton);
@@ -148,31 +152,33 @@ public class project {
 		// TODO Auto-generated method stub
 		JFrame AllPathFrame = new JFrame();
 		JPanel vPanel = new JPanel();
+		JButton clearButton = new JButton("Clear");
+		JButton backButton = new JButton("Back");
+		vPanel.add(clearButton);
+		vPanel.add(backButton);
 		JButton[] vButtons = new JButton[max];
 		for(int i = 0; i < max; ++i) {
 			vButtons[i] = new JButton(Integer.toString(i+1));
 			vPanel.add(vButtons[i]);
 		}
-		JButton backButton = new JButton("Back");
-		JButton clearButton = new JButton("Clear");
 		
-		vPanel.add(backButton);
-		vPanel.add(clearButton);
 		vPanel.setForeground(Color.GREEN);
 		
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
-		AllPathFrame.setPreferredSize(new Dimension(550, 550));
+		AllPathFrame.setPreferredSize(new Dimension(560, 560));
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) {
 				AllPathFrame.dispose();
+				omw.clear();
 			}
 		});
 		setLabel(AllPathFrame);
-		AllPathFrame.pack();
-		AllPathFrame.setVisible(true);
+		
 		getView(AllPathFrame);
+		
+
 		for(int i = 0; i < max; ++i) {
 			vButtons[i].addActionListener(new ActionListener() {
 				
@@ -184,6 +190,24 @@ public class project {
 							try {
 								i3 = i;
 								omw.addOption(1, i3);
+								for(int j = 0; j < max; ++j) {
+									if(vertex.contains(j+1)) {
+										vPanel.remove(vButtons[j]);
+									}
+									vPanel.add(vButtons[j]);
+								}
+								vertex = omw.getVertex();
+								for(int j = 0; j < max; ++j) {
+									if(!vertex.contains(j+1)) {
+										vPanel.remove(vButtons[j]);
+									}
+								}
+								AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+								AllPathFrame.getContentPane().remove(view);
+								view = omw.getViewer();
+								AllPathFrame.add(view);
+								AllPathFrame.pack();
+								AllPathFrame.setVisible(true);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -192,6 +216,7 @@ public class project {
 					}
 				}
 			});
+			
 		}
 		
 		backButton.addActionListener(new ActionListener() {
@@ -201,21 +226,55 @@ public class project {
 				// TODO Auto-generated method stub
 				try {
 					omw.addOption(0, i3);
+					for(int j = 0; j < max; ++j) {
+						if(vertex.contains(j+1)) {
+							vPanel.remove(vButtons[j]);
+						}
+							vPanel.add(vButtons[j]);
+
+					}
+					vertex = omw.getVertex();
+					for(int j = 0; j < max; ++j) {
+						if(!vertex.contains(j+1)) {
+							vPanel.remove(vButtons[j]);
+						}
+					}
+					AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+					AllPathFrame.getContentPane().remove(view);
+					view = omw.getViewer();
+					AllPathFrame.add(view);
+					AllPathFrame.pack();
+					AllPathFrame.setVisible(true);
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
-		
 		clearButton.addActionListener(new ActionListener() {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				omw.clear();
+				for(int j = 0; j < max; ++j) {
+					if(vertex.contains(j+1)) {
+						vPanel.remove(vButtons[j]);
+					}
+					vPanel.add(vButtons[j]);
+				}
+				AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+				AllPathFrame.getContentPane().remove(view);
+				view = omw.getViewer();
+				AllPathFrame.add(view);
+				AllPathFrame.pack();
+				AllPathFrame.setVisible(true);
 			}
 		});
+		
+		
+		AllPathFrame.pack();
+		AllPathFrame.setVisible(true);
 	}
 	
 	
@@ -232,7 +291,7 @@ public class project {
 		vPanel.setForeground(Color.GREEN);
 		
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
-		AllPathFrame.setPreferredSize(new Dimension(500, 500));
+		AllPathFrame.setPreferredSize(new Dimension(560, 560));
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
@@ -245,7 +304,7 @@ public class project {
 		AllPathFrame.setVisible(true);
 		getView(AllPathFrame);
 		
-		
+		c[0] = 0;
 		for(int i = 0; i < max; ++i) {
 			c[i + 1] = 0;
 			vButtons[i].addActionListener(new ActionListener() {
@@ -283,6 +342,8 @@ public class project {
 								g.runDFS(i1 , i2, "path between vertex " + i1 + " and vertex " +i2 );
 								c[i1] = 0;
 								c[i2] = 0;
+								i1 = 0;
+								i2 = 0;
 							}
 						}
 					}
@@ -300,7 +361,8 @@ public class project {
 		graph.setAutoCreate( true );
         String data = "1 2 3\n"
         		+ "2 5 6 4\n"
-        		+ "4 3 5 6 8 7";
+        		+ "4 3 5 6 8 7\n"
+        		+ "5 2 1 8";
         
         try {
             // Creates a Writer using FileWriter
@@ -394,9 +456,9 @@ public class project {
         
 	}
 	public static void getView(JFrame frame) {
-    	SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+    	viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
-        JPanel view = (JPanel) viewer.addDefaultView(false);
+        view = (JPanel) viewer.addDefaultView(false);
         frame.getContentPane().add(view);
     }
 	

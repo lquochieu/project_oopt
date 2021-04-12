@@ -8,10 +8,13 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.swing_viewer.SwingViewer;
+import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 
 public class OnMyWay extends GraphLinkedList{
@@ -25,6 +28,7 @@ public class OnMyWay extends GraphLinkedList{
 	private Edge edge;
 	private String a;
 	private String b;
+	private ArrayList<Integer> vertex = new ArrayList<Integer>();
 	OnMyWay(int vertices) {
 		super(vertices);
 		// TODO Auto-generated constructor stub
@@ -42,7 +46,6 @@ public class OnMyWay extends GraphLinkedList{
 		stack.clear();
 		graph = new SingleGraph("Use");
     	graphDraw();
-    	graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 	}
 	void addOption(int i, int pl) throws IOException {
 		if(stack.size() > 0) {
@@ -60,7 +63,6 @@ public class OnMyWay extends GraphLinkedList{
 			}
 			place =stack.get(stack.size() -1);
 			stepBack();
-			graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 		}
 	}
 	
@@ -68,19 +70,18 @@ public class OnMyWay extends GraphLinkedList{
 		
 		if (stack.size() == 0) {
 			stack.add(place);
-			System.out.println(place);
 			visited[place] = true;
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
-			graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 		}
 		else {
 			ite = adjLists[prePlace].listIterator();
 			int countemp = 0;
 		    while (ite.hasNext()) {
 		        int adj = ite.next();
-		        if (!visited[adj])
+		        if (!visited[adj]) {
 		        	countemp = 1;
+		        }
 		    }
 		    if (countemp == 0)
 		    	JOptionPane.showMessageDialog(null, "Sorry, there is not no way to choose!", null, JOptionPane.INFORMATION_MESSAGE);
@@ -96,7 +97,6 @@ public class OnMyWay extends GraphLinkedList{
 	    		String b = Integer.toString(stack.get(stack.size() - 1));
 	    		Edge edge=graph.getEdge(a + " " + b);
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
-	    		graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 		    }
 		}
 	}
@@ -112,7 +112,6 @@ public class OnMyWay extends GraphLinkedList{
 			edge.setAttribute("ui.style", "fill-color: black; size: 0.8px;");
 			visited[place] = false;
 			stack.remove(stack.size() - 1);
-			System.out.println(place);
 			place = stack.get(stack.size() - 1);
 		}
 		else {
@@ -129,6 +128,33 @@ public class OnMyWay extends GraphLinkedList{
 			}
 		}
 		return false;
+	}
+	
+	public JPanel getViewer() {
+		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+        viewer.enableAutoLayout();
+        JPanel view = (JPanel) viewer.addDefaultView(false);
+        return view;
+	}
+	
+	public ArrayList<Integer> getVertex() {
+		vertex.clear();
+		if(stack.size() > 0) {
+		ite = adjLists[place].iterator();
+		while (ite.hasNext()) {
+	        int adj = ite.next();
+	        if (!visited[adj]) {
+	        	vertex.add(adj);
+	        }
+	    }
+	
+		}
+		else {
+			for(int i = 1; i <= vertices; ++i) {
+				vertex.add(i);
+			}
+		}
+		return vertex;
 	}
 	
 }
