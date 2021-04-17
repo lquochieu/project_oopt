@@ -125,6 +125,7 @@ public class OnMyWay2 extends GraphLinkedList{
 				v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 				v[place].setAttribute("ui.label", Integer.toString(place));
 	    		Edge edge=graph.getEdge(tempEdgeString);
+			System.out.println(prePlace + "->" + place);    
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
 		    }
 		}
