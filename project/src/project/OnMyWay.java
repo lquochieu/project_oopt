@@ -141,12 +141,12 @@ public class OnMyWay extends GraphLinkedList{
 		vertex.clear();
 		if(stack.size() > 0) {
 		ite = adjLists[place].iterator();
-		while (ite.hasNext()) {
-	        int adj = ite.next();
-	        if (!visited[adj]) {
-	        	vertex.add(adj);
-	        }
-	    }
+			while (ite.hasNext()) {
+		        int adj = ite.next();
+		        if (!visited[adj]) {
+		        	vertex.add(adj);
+		        }
+		    }
 	
 		}
 		else {

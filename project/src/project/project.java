@@ -4,9 +4,11 @@ package project;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
@@ -24,13 +26,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.graphstream.graph.Graph;
@@ -49,11 +57,13 @@ import org.graphstream.ui.view.camera.Camera;
 
 
 
+
 public class project {
-	private static OnMyWay omw;
+	private static OnMyWay2 omw;
 	private static DFS g;
 	
 	private static Graph graph;
+	private static String path = "";
 	private static String[] v;
 	private static int[][] allIntArr;
 	private static String[] arrOfStr;
@@ -61,43 +71,156 @@ public class project {
 	private static int i1, i2, i3 = 0, x = 0, y = 0, a = 0;
 	private static Integer[] c;
 	private static int size;
+	private static JFrame welcomeFrame;
 	private static JFrame frame = new JFrame();
 	private static JPanel buttonJPanel;
 	private static SwingViewer viewer;
 	private static JPanel view;
 	private static ArrayList<Integer> vertex = new ArrayList<Integer>();
+	private static LinkedList<Integer> aIntegers = new LinkedList<Integer>();
+	private static ArrayList<String> hasNext=new ArrayList<>();
+	private static HashMap<String,String[]> adjEdge=new HashMap<>();
 	
 	public static void main(String args[]) throws IOException {
-		
-        prepare();
+		welcome();
         c = new Integer[max + 1];
-        console();
-        
-        
         //graph
+	}
+	
+	public static void welcome() throws IOException {
+		welcomeFrame = new JFrame();
+		BufferedImage myPicture = ImageIO.read(new File("project.jpg"));
+		JLabel picLabel = new JLabel(new ImageIcon(myPicture));
+		
+		JPanel nameMember = new JPanel();
+		JPanel dirPanel = new JPanel();
+		nameMember.add(picLabel);
+		JLabel[] mb = new JLabel[7];
+		JLabel[] mssv = new JLabel[7];
+		mb[1] = new JLabel("Hồ Anh");
+		mssv[1] = new JLabel("20190037");
+		mb[2] = new JLabel("Tạ Hữu Bình");
+		mssv[2] = new JLabel("20190094");
+		mb[3] = new JLabel("Nguyễn Hải Dương");
+		mssv[3] = new JLabel("20190044");
+		mb[4] = new JLabel("Trịnh Tùng Dương");
+		mssv[4] = new JLabel("20190045");
+		mb[5] = new JLabel("Trần Trọng Hiệp");
+		mssv[5] = new JLabel("20190051");
+		mb[6] = new JLabel("Lê Huy Hoàng");
+		mssv[6] = new JLabel("20190053");
+		for(int i = 1; i <= 6; ++i) {
+			mb[i].setFont(new Font("Helvetica", Font.PLAIN, 20));
+			mssv[i].setFont(new Font("Helvetica", Font.PLAIN, 20));
+			nameMember.add(mb[i]);
+			nameMember.add(mssv[i]);
+		}
+		nameMember.setLayout(new GridLayout(6, 2));
+		
+		JLabel dirLabel = new JLabel("Enter path ");
+		JTextField dirText = new JTextField(50);
+		JButton finishButton = new JButton("Finish");
+		JButton directoryButton = new JButton("Directory");
+		dirPanel.add(dirLabel);
+		dirPanel.add(dirText);
+		dirPanel.add(finishButton);
+		dirPanel.add(directoryButton);
+		
+		JFileChooser fileDialog = new JFileChooser();
+		
+		directoryButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				int returnval = fileDialog.showOpenDialog(welcomeFrame);
+				if(returnval == JFileChooser.APPROVE_OPTION) {
+					File file = fileDialog.getSelectedFile();
+					String p = file.getName();
+					if(!p.endsWith("txt")) {
+						JOptionPane.showMessageDialog(null, "File error", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+						path = file.getPath();
+						welcomeFrame.setVisible(false);
+						frame.setVisible(true);
+						try {
+							prepare();
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						console();
+					}
+				}
+			}
+		});
+		finishButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				path =  dirText.getText();
+				
+				try {
+					prepare();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				if(graph.getEdgeCount() == 0) {
+					JOptionPane.showMessageDialog(null, "File error", "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+				welcomeFrame.setVisible(false);
+				frame.setVisible(true);
+				console();
+				}
+			}
+		});
+		welcomeFrame.setTitle("Project Java");
+		welcomeFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		welcomeFrame.getContentPane().add(picLabel, BorderLayout.WEST);
+		welcomeFrame.getContentPane().add(nameMember, BorderLayout.CENTER);
+		welcomeFrame.getContentPane().add(dirPanel, BorderLayout.SOUTH);
+		welcomeFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		welcomeFrame.setVisible(true);
 	}
 	
 	public static void console() {
 		
-        JButton showButton = new JButton("Bai 1");
-        JButton AllPAthButton = new JButton("Bai 2");
-        JButton QuestionsPathButton = new JButton("Bai 3");
+        JButton showButton = new JButton("Bài 1");
+        JButton AllPAthButton = new JButton("Bài 2");
+        JButton QuestionsPathButton = new JButton("Bài 3");
+        JButton homeButton = new JButton("Home");
         
         
         buttonJPanel = new JPanel();
+        buttonJPanel.add(homeButton);
         buttonJPanel.add(showButton);
         buttonJPanel.add(AllPAthButton);
         buttonJPanel.add(QuestionsPathButton);
+        
         buttonJPanel.setBackground(Color.orange);
         
         setLabel(frame);
         
-        frame.setPreferredSize(new Dimension(500, 550));
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.getContentPane().add(buttonJPanel, BorderLayout.SOUTH);
         frame.setTitle("Project OOPT");
         frame.setForeground(Color.YELLOW);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getView(frame);
+        
+        homeButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				frame.setVisible(false);
+				welcomeFrame.setVisible(true);
+			}
+		});
         showButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -139,7 +262,7 @@ public class project {
 	
 
 	public static void setLabel(JFrame frame) {
-		JLabel showGraphLabel = new JLabel("Welcome to our graph");
+		JLabel showGraphLabel = new JLabel("PROJECT JAVA");
         showGraphLabel.setFont(new Font("Helvetica", Font.PLAIN, 30));
         showGraphLabel.setForeground(Color.RED);
         
@@ -154,6 +277,25 @@ public class project {
 		JPanel vPanel = new JPanel();
 		JButton clearButton = new JButton("Clear");
 		JButton backButton = new JButton("Back");
+		JButton btnNewButton = new JButton("Menu");
+		btnNewButton.setBounds(10, 10, 208, 29);
+		btnNewButton.setBackground(Color.CYAN);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							omw.clear();
+							console();
+							AllPathFrame.dispose();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
+		vPanel.add(btnNewButton);
 		vPanel.add(clearButton);
 		vPanel.add(backButton);
 		JButton[] vButtons = new JButton[max];
@@ -165,7 +307,8 @@ public class project {
 		vPanel.setForeground(Color.GREEN);
 		
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
-		AllPathFrame.setPreferredSize(new Dimension(560, 560));
+		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
@@ -191,23 +334,34 @@ public class project {
 								i3 = i;
 								omw.addOption(1, i3);
 								for(int j = 0; j < max; ++j) {
-									if(vertex.contains(j+1)) {
-										vPanel.remove(vButtons[j]);
-									}
+									
 									vPanel.add(vButtons[j]);
 								}
-								vertex = omw.getVertex();
+								/*vertex = omw.getVertex();
 								for(int j = 0; j < max; ++j) {
 									if(!vertex.contains(j+1)) {
 										vPanel.remove(vButtons[j]);
 									}
+								}*/
+								if (!omw.getSignal()) {
+									
 								}
+								
+								aIntegers = omw.getPlaceAdj();
+								for(int j = 0; j < max; ++j) {
+									if(!aIntegers.contains(j+1)) {
+										vPanel.remove(vButtons[j]);
+									}
+								}
+								vPanel.repaint();
 								AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 								AllPathFrame.getContentPane().remove(view);
 								view = omw.getViewer();
 								AllPathFrame.add(view);
 								AllPathFrame.pack();
+								AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 								AllPathFrame.setVisible(true);
+								frame.dispose();
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -239,12 +393,15 @@ public class project {
 							vPanel.remove(vButtons[j]);
 						}
 					}
+					vPanel.repaint();
 					AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 					AllPathFrame.getContentPane().remove(view);
 					view = omw.getViewer();
 					AllPathFrame.add(view);
 					AllPathFrame.pack();
+					AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 					AllPathFrame.setVisible(true);
+					frame.dispose();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -263,18 +420,23 @@ public class project {
 					}
 					vPanel.add(vButtons[j]);
 				}
+				vPanel.repaint();
 				AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
 				AllPathFrame.add(view);
 				AllPathFrame.pack();
+				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 				AllPathFrame.setVisible(true);
+				frame.dispose();
 			}
 		});
 		
 		
 		AllPathFrame.pack();
+		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setVisible(true);
+		frame.dispose();
 	}
 	
 	
@@ -283,6 +445,25 @@ public class project {
 		JFrame AllPathFrame = new JFrame();
 		JPanel vPanel = new JPanel();
 		JButton[] vButtons = new JButton[max];
+		JButton btnNewButton = new JButton("Menu");
+		btnNewButton.setBounds(10, 10, 208, 29);
+		btnNewButton.setBackground(Color.CYAN);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				EventQueue.invokeLater(new Runnable() {
+					public void run() {
+						try {
+							console();
+							AllPathFrame.dispose();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
+		});
+		btnNewButton.setFont(new Font("Times New Roman", Font.BOLD, 18));
+		vPanel.add(btnNewButton);
 		for(int i = 0; i < max; ++i) {
 			vButtons[i] = new JButton(Integer.toString(i+1));
 			vPanel.add(vButtons[i]);
@@ -290,8 +471,9 @@ public class project {
 		
 		vPanel.setForeground(Color.GREEN);
 		
+		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
-		AllPathFrame.setPreferredSize(new Dimension(560, 560));
+		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
@@ -302,6 +484,7 @@ public class project {
 		setLabel(AllPathFrame);
 		AllPathFrame.pack();
 		AllPathFrame.setVisible(true);
+		frame.dispose();
 		getView(AllPathFrame);
 		
 		c[0] = 0;
@@ -359,45 +542,32 @@ public class project {
 		graph = new SingleGraph("Project");
 		graph.setStrict(false);
 		graph.setAutoCreate( true );
-        String data = "1 2 3\n"
-        		+ "2 5 6 4\n"
-        		+ "4 3 5 6 8 7\n"
-        		+ "5 2 1 8";
-        
-        try {
-            // Creates a Writer using FileWriter
-            Writer output = new FileWriter("output.txt");
-
-
-            // Writes string to the file
-            output.write(data);
-
-            // Closes the writer
-            output.close();
-        }
-
-        catch (Exception e) {
-            e.getStackTrace();
-        }
-        
-     // Creates an array of character
+		
+		 // Creates an array of character
         char[] array = new char[100];
         // Read file into an arraylist
     	ArrayList<String> listOfLines = new ArrayList<>(); 
+    	BufferedReader bufReader;
         try {
-        	BufferedReader bufReader = new BufferedReader(new FileReader("output.txt")); 
-        	String line = bufReader.readLine(); 
-        	while (line != null) {
+            //doc file text theo dong
+            bufReader = new BufferedReader(new FileReader(
+                    path));
+            String line = bufReader.readLine();
+            //voi moi dong:
+            //add gia tri dau tien vao danh sach cac dinh co it nhat 1 dinh ke hasNext              (1)
+            //put vao adjmap (hashmap) ten dinh va danh sach cac dinh ke voi no.                    (2)
+            //them canh vao graph tu dong do                                                        (3)
+            //tim dinh dich   
+            
+            while (line != null) {
         		listOfLines.add(line);
         		line = bufReader.readLine();
         	} 
-        	bufReader.close();
-
+            bufReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        catch(Exception e) {
-            e.getStackTrace();
-        }
+    
         size = listOfLines.size();
         
         
@@ -437,7 +607,7 @@ public class project {
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
-        omw = new OnMyWay(max);
+        omw = new OnMyWay2(max);
         for (int i = 0; i < size; i++) {
         	for (int j = 1; j < allIntArr[i].length; j++) {
         		omw.addEdge(allIntArr[i][0], allIntArr[i][j]);
