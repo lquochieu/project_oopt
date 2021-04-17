@@ -77,6 +77,7 @@ public class DFS extends GraphLinkedList{
 	    visited[vertex] = false;
 	    stack.remove(stack.size() - 1);
     }  
+    // chạy thuật DFS
     void runDFS(int vertex, int end) {
     	runDFS(vertex, end, true);
     	if (count == 0){
@@ -88,6 +89,7 @@ public class DFS extends GraphLinkedList{
     	
     	
     }
+    // path là tên của file ảnh của thuật DFS và vị trí lưu nó
     void runDFS(int vertex, int end, String path) {
     	this.path = path;
     	runDFS(vertex, end);

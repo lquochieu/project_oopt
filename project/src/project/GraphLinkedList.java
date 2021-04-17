@@ -48,6 +48,7 @@ public class GraphLinkedList {
 		adjLists[src].add(dest);
 
 	}
+	// vẽ đồ thị
 	void graphDraw() {
 		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Use");
@@ -70,6 +71,7 @@ public class GraphLinkedList {
 		
 		
 	}
+	//xuất đồ thị dướng dạng file ảnh png
 	void graphShow() throws IOException {
 		graphDraw();
 		graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
@@ -86,7 +88,7 @@ public class GraphLinkedList {
 		}
 
 	}
-	
+	// nhận tên của graph để xuất ảnh với tên tương ứng
 	public void graphString(String path) throws IOException {
 		this.path = path;
 		graphShow();

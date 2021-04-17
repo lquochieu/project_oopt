@@ -83,17 +83,16 @@ public class project {
 	
 	public static void main(String args[]) throws IOException {
 		welcome();
-        c = new Integer[max + 1];
-        //graph
+		///welcome: hiện thị ra tên các thành viên trong nhóm và chọn file txt để chạy đồ thị
 	}
 	
 	public static void welcome() throws IOException {
 		welcomeFrame = new JFrame();
-		BufferedImage myPicture = ImageIO.read(new File("project.jpg"));
+		BufferedImage myPicture = ImageIO.read(new File("project.jpg")); // ảnh logo đại học bách khoa
 		JLabel picLabel = new JLabel(new ImageIcon(myPicture));
 		
-		JPanel nameMember = new JPanel();
-		JPanel dirPanel = new JPanel();
+		JPanel nameMember = new JPanel(); // nameMember panel chứa các label tên và mssv của các member
+		JPanel dirPanel = new JPanel(); // dirPanel chứa button directory, finish và điền đường path của file txt
 		nameMember.add(picLabel);
 		JLabel[] mb = new JLabel[7];
 		JLabel[] mssv = new JLabel[7];
@@ -109,24 +108,27 @@ public class project {
 		mssv[5] = new JLabel("20190051");
 		mb[6] = new JLabel("Lê Huy Hoàng");
 		mssv[6] = new JLabel("20190053");
+		nameMember.setLayout(new GridLayout(6, 2)); // tạo lớp layout 6 hàng 2 cột (kiểu dạng bảng 6x2)
+        // các label được add vào sẽ theo thứ tự add vào các cột rồi đến các hàng, cái nào đc add trước thì thêm vào trước
+        
 		for(int i = 1; i <= 6; ++i) {
-			mb[i].setFont(new Font("Helvetica", Font.PLAIN, 20));
+			mb[i].setFont(new Font("Helvetica", Font.PLAIN, 20)); // kiểu chữ Helvetica, cỡ chữ 20
 			mssv[i].setFont(new Font("Helvetica", Font.PLAIN, 20));
-			nameMember.add(mb[i]);
+			nameMember.add(mb[i]);    // mb[1] add vào trước sẽ ở ô (1,1), sau đó add mssv[1] sẽ ở ô (1,2), tiếp đó add mb[2] sẽ ở ô (2,1) và cứ như thế ta sẽ có được cái in mong muốn ra frame..... 
 			nameMember.add(mssv[i]);
 		}
-		nameMember.setLayout(new GridLayout(6, 2));
+		
 		
 		JLabel dirLabel = new JLabel("Enter path ");
-		JTextField dirText = new JTextField(50);
-		JButton finishButton = new JButton("Finish");
-		JButton directoryButton = new JButton("Directory");
+		JTextField dirText = new JTextField(50); // độ dài của phần được nhập là 50 ký tự
+		JButton finishButton = new JButton("Finish"); // hoàn tất việc điền đường path và xử lý file txt đó
+		JButton directoryButton = new JButton("Directory"); // chọn file txt thỏa mãn trong máy
 		dirPanel.add(dirLabel);
 		dirPanel.add(dirText);
 		dirPanel.add(finishButton);
 		dirPanel.add(directoryButton);
 		
-		JFileChooser fileDialog = new JFileChooser();
+		JFileChooser fileDialog = new JFileChooser(); //xử lý việc chọn directory
 		
 		directoryButton.addActionListener(new ActionListener() {
 			
@@ -137,20 +139,25 @@ public class project {
 				if(returnval == JFileChooser.APPROVE_OPTION) {
 					File file = fileDialog.getSelectedFile();
 					String p = file.getName();
-					if(!p.endsWith("txt")) {
+					if(!p.endsWith("txt")) { // nếu không là file txt lập tức thông báo lỗi
 						JOptionPane.showMessageDialog(null, "File error", "ERROR", JOptionPane.ERROR_MESSAGE);
 					}
 					else {
 						path = file.getPath();
-						welcomeFrame.setVisible(false);
-						frame.setVisible(true);
 						try {
 							prepare();
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
+						if(graph.getEdgeCount() == 0) { // nếu file txt đó không phải file chứ dữ liệu đồ thị lập tức thông báo lỗi
+							JOptionPane.showMessageDialog(null, "File error", "ERROR", JOptionPane.ERROR_MESSAGE);
+						}
+						else {
+						welcomeFrame.setVisible(false);
+						frame.setVisible(true);
 						console();
+						}
 					}
 				}
 			}
@@ -187,12 +194,13 @@ public class project {
 		welcomeFrame.setVisible(true);
 	}
 	
+	/// console được gọi khi chọn xong file txt và xử lý xong phần prepare()
 	public static void console() {
 		
-        JButton showButton = new JButton("Bài 1");
-        JButton AllPAthButton = new JButton("Bài 2");
-        JButton QuestionsPathButton = new JButton("Bài 3");
-        JButton homeButton = new JButton("Home");
+        JButton showButton = new JButton("Bài 1"); // xử lý bài 1
+        JButton AllPAthButton = new JButton("Bài 2"); // xử lý bài 2
+        JButton QuestionsPathButton = new JButton("Bài 3");  // xử lý bài 3
+        JButton homeButton = new JButton("Home"); // quay trở về welcomeframe
         
         
         buttonJPanel = new JPanel();
@@ -228,7 +236,7 @@ public class project {
 				// TODO Auto-generated method stub
 				
 				try {
-					g.graphString("Bai1");
+					g.graphString("Bai1"); // thực hiện bài 1
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -242,8 +250,8 @@ public class project {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				g.runDFS(1, max, "Bai2");
-				AllPathButton();
+				g.runDFS(1, max, "Bai2"); // in tất cả các đường đi từ đỉnh đầu đên đỉnh cuối
+				AllPathButton(); // mở rộng ra, ta có thể chọn 2 đỉnh bất ký và in ra tất cả đường đi giữa 2 đỉnh đó
 				
 			}
 		});
@@ -252,7 +260,7 @@ public class project {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				QuestionsPath();
+				QuestionsPath(); // phần mô phỏng bài 3
 							}
 		});
         frame.pack();
@@ -260,24 +268,15 @@ public class project {
 	}
 	
 	
-
-	public static void setLabel(JFrame frame) {
-		JLabel showGraphLabel = new JLabel("PROJECT JAVA");
-        showGraphLabel.setFont(new Font("Helvetica", Font.PLAIN, 30));
-        showGraphLabel.setForeground(Color.RED);
-        
-        showGraphLabel.setHorizontalAlignment(SwingConstants.CENTER);
-      
-        frame.add(showGraphLabel, BorderLayout.NORTH);
-	}
 	
+	/// bài 3
 	protected static void QuestionsPath() {
 		// TODO Auto-generated method stub
-		JFrame AllPathFrame = new JFrame();
+		JFrame AllPathFrame = new JFrame(); // tạo 1 frame mới 
 		JPanel vPanel = new JPanel();
-		JButton clearButton = new JButton("Clear");
-		JButton backButton = new JButton("Back");
-		JButton btnNewButton = new JButton("Menu");
+		JButton clearButton = new JButton("Clear"); // khôi phục lại đồ thị ban đầu
+		JButton backButton = new JButton("Back"); // quay lại đỉnh đã đi qua
+		JButton btnNewButton = new JButton("Menu"); // quay lại frame chọn bài
 		btnNewButton.setBounds(10, 10, 208, 29);
 		btnNewButton.setBackground(Color.CYAN);
 		btnNewButton.addActionListener(new ActionListener() {
@@ -298,7 +297,7 @@ public class project {
 		vPanel.add(btnNewButton);
 		vPanel.add(clearButton);
 		vPanel.add(backButton);
-		JButton[] vButtons = new JButton[max];
+		JButton[] vButtons = new JButton[max]; // tạo các button với vButtons[i] là đỉnh thứ i
 		for(int i = 0; i < max; ++i) {
 			vButtons[i] = new JButton(Integer.toString(i+1));
 			vPanel.add(vButtons[i]);
@@ -312,12 +311,12 @@ public class project {
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
-			public void windowClosing(WindowEvent windowEvent) {
+			public void windowClosing(WindowEvent windowEvent) { // khi frame đóng, khôi phục lại đồ thị như ban đầu
 				AllPathFrame.dispose();
 				omw.clear();
 			}
 		});
-		setLabel(AllPathFrame);
+		setLabel(AllPathFrame); // hiển thị label của frame
 		
 		getView(AllPathFrame);
 		
@@ -329,11 +328,11 @@ public class project {
 				public void actionPerformed(ActionEvent e) {
 					// TODO Auto-generated method stub
 					for(int i = 1; i <= max; ++i) {
-						if(e.getActionCommand().equals(Integer.toString(i))) {
+						if(e.getActionCommand().equals(Integer.toString(i))) {// xem đỉnh nào được nhấn hiện tại
 							try {
 								i3 = i;
-								omw.addOption(1, i3);
-								for(int j = 0; j < max; ++j) {
+								omw.addOption(1, i3); // đi tới đỉnh đó
+								for(int j = 0; j < max; ++j) { // khôi phục lại các buton, để khi xóa các button ta sẽ có các button được xếp sếp theo thứ tự tăng dần
 									
 									vPanel.add(vButtons[j]);
 								}
@@ -349,11 +348,10 @@ public class project {
 								
 								aIntegers = omw.getPlaceAdj();
 								for(int j = 0; j < max; ++j) {
-									if(!aIntegers.contains(j+1)) {
+									if(!aIntegers.contains(j+1)) { // những đỉnh nào mà không kề với đỉnh hiện tại sẽ xóa các button của các đỉnh đó đi
 										vPanel.remove(vButtons[j]);
 									}
 								}
-								vPanel.repaint();
 								AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 								AllPathFrame.getContentPane().remove(view);
 								view = omw.getViewer();
@@ -373,7 +371,7 @@ public class project {
 			
 		}
 		
-		backButton.addActionListener(new ActionListener() {
+		backButton.addActionListener(new ActionListener() { // quay lại đỉnh trước đó
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -408,7 +406,7 @@ public class project {
 				}
 			}
 		});
-		clearButton.addActionListener(new ActionListener() {
+		clearButton.addActionListener(new ActionListener() { // khôi phục lại đồ thị
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -440,8 +438,9 @@ public class project {
 	}
 	
 	
-	public static void AllPathButton() {
+	public static void AllPathButton() { // ài 2
 		// TODO Auto-generated method stub
+		 c = new Integer[max + 1];
 		JFrame AllPathFrame = new JFrame();
 		JPanel vPanel = new JPanel();
 		JButton[] vButtons = new JButton[max];
@@ -497,6 +496,8 @@ public class project {
 					// TODO Auto-generated method stub
 					for(int i = 1; i <= max; ++i) {
 						if(e.getActionCommand().equals(Integer.toString(i))) {
+							// đây là thuật toán để khi nhấn 2 đỉnh khác nhau liên tiếp sẽ in tất cả các đường đi giữa 2 đỉnh đó
+							//nếu nhấn 1 đỉnh nhiều lần liên tiếp sẽ chỉ tính 1 lần
 							
 							if(a == 0) {
 									c[i] = 1;
@@ -537,7 +538,7 @@ public class project {
 	}
 	
 	
-	public static void prepare() throws IOException {
+	public static void prepare() throws IOException { // đọc file, xử lý để in ra đồ thị từ file đó
 		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Project");
 		graph.setStrict(false);
@@ -568,14 +569,14 @@ public class project {
             e.printStackTrace();
         }
     
-        size = listOfLines.size();
+        size = listOfLines.size(); // số dòng trong file
         
         
         allIntArr = new int[size][];
         
         //Read to list of integers for each line
         for (int i = 0; i < size; i++) {
-        	arrOfStr = listOfLines.get(i).split(" ");
+        	arrOfStr = listOfLines.get(i).split(" "); // mỗi dòng sẽ tách ra thành các phần tử vào lưu vào mảng tương ứng
         	int arrOfStrlength = arrOfStr.length;
         	allIntArr[i] = new int[arrOfStrlength];
         	
@@ -584,11 +585,11 @@ public class project {
         		
         	}
         	for (int j = 1; j < arrOfStrlength; j++) {
-        			graph.addEdge(arrOfStr[0] + arrOfStr[j], arrOfStr[0], arrOfStr[j], true);
+        			graph.addEdge(arrOfStr[0] + arrOfStr[j], arrOfStr[0], arrOfStr[j], true); // true: đồ thị có hướng
         			
         	        		
         	}
-        	for (int j = 0; j < arrOfStrlength; j++) {
+        	for (int j = 0; j < arrOfStrlength; j++) { // tìm đỉnh có số hiệu lớn nhất
         		if (max < allIntArr[i][j])
             		max = allIntArr[i][j];
         	}
@@ -596,7 +597,7 @@ public class project {
         	
         	
         }
-        g = new DFS(max);
+        g = new DFS(max); // add các cạnh vào DFS để chạy thuật toán đó
         for (int i = 0; i < size; i++) {
         	for (int j = 1; j < allIntArr[i].length; j++) {
         		g.addEdge(allIntArr[i][0], allIntArr[i][j]);
@@ -607,7 +608,7 @@ public class project {
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
-        omw = new OnMyWay2(max);
+        omw = new OnMyWay2(max); //thêm các cạnh vào để chạy thuật toán bài 3
         for (int i = 0; i < size; i++) {
         	for (int j = 1; j < allIntArr[i].length; j++) {
         		omw.addEdge(allIntArr[i][0], allIntArr[i][j]);
@@ -625,6 +626,18 @@ public class project {
         }
         
 	}
+	// đây là đặt nhãn dán cho 1 frame bất kỳ ở phía trên cùng của frame
+		public static void setLabel(JFrame frame) {
+			JLabel showGraphLabel = new JLabel("PROJECT JAVA");
+	        showGraphLabel.setFont(new Font("Helvetica", Font.PLAIN, 30));
+	        showGraphLabel.setForeground(Color.RED);
+	        
+	        showGraphLabel.setHorizontalAlignment(SwingConstants.CENTER);
+	      
+	        frame.add(showGraphLabel, BorderLayout.NORTH);
+		}
+		
+	// chèn đồ thị vào frame
 	public static void getView(JFrame frame) {
     	viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();

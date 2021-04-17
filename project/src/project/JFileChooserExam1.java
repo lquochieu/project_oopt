@@ -1,4 +1,4 @@
-package TaHuuBinh;
+package project;
 
 import java.awt.FlowLayout;
 import java.awt.GridLayout;

@@ -65,30 +65,30 @@ public class OnMyWay2 extends GraphLinkedList{
 		graph = new SingleGraph("Use");
     	graphDraw();
 	}
-	void addOption(int i, int pl) throws IOException {
-		if(stack.size() > 0) {
-			prePlace = place;
+	void addOption(int i, int pl) throws IOException { // i có 2 trạng thái là 1 và 0, 1 là đi tới, 0 là đi lùi, "pl" là tên đỉnh cần tiến tới
+		if(stack.size() > 0) { //stack là mảng stack lưu các đỉnh đã ấn 
+			prePlace = place; // nếu số đỉnh ở trong stack > 0, ta lưu đỉnh đã được tiến tới trước đỉnh "pl" và prePlace
 		}
 		
 		if(i ==1 ) {
-			int templace = place;
-			place = pl;
-			stepForward();
-			if (!signal)
+			int templace = place; // tamplace là vị trí prePlace
+			place = pl; // đỉnh hiện tại = "pl"
+			stepForward(); //tiến hành thủ tục đi tới
+			if (!signal) //nếu không đi tới đc, vị trí quay lại vị trí templace
 				place = templace;
 		}
 		else {
-			if(stack.size() == 0) {
+			if(stack.size() == 0) { // nếu trong stack không có đỉnh nào thì không thể đi lùi đc
 				return;
 			}
-			place =stack.get(stack.size() -1);
-			stepBack();
+			place =stack.get(stack.size() -1); // vị trí hiện tại sẽ bằng phần tử cuối cùng trong stack
+			stepBack(); // thực hiện đi lùi
 		}
 	}
 	
 	private void stepForward() {
 		while (vertexStack.size() != 0) {
-			int temp = vertexStack.get(0);
+			int temp = vertexStack.get(0); 
 			v[temp].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
 			v[temp].setAttribute("ui.label", Integer.toString(temp));
 			vertexStack.remove(0);
@@ -102,20 +102,20 @@ public class OnMyWay2 extends GraphLinkedList{
 		}
 		
 		
-		if (stack.size() == 0) {
+		if (stack.size() == 0) {// set thuộc tích cho đỉnh đầu tiên được chọn
 			stack.add(place);
 			visited[place] = true;
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
 		}
 		else {
-			String tempEdgeString = prePlace + " " + place;
+			String tempEdgeString = prePlace + " " + place; // tên của cạnh được chọn
 			
 		    if (isVisited(tempEdgeString)) {
 		    	JOptionPane.showMessageDialog(null, "Sorry, You choose this way before", null, JOptionPane.INFORMATION_MESSAGE);
 		    	signal = false;
 		    }
-		    else {
+		    else {// nếu cạnh chưa được đi thì ta đi và tô màu cạnh đó
 		    	signal = true;
 				v[prePlace].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
 				v[prePlace].setAttribute("ui.label", Integer.toString(prePlace));
@@ -132,7 +132,7 @@ public class OnMyWay2 extends GraphLinkedList{
 	
 	private void stepBack() {
 		
-		if (stack.size() > 1) {
+		if (stack.size() > 1) { // đi ngược lại và loại bỏ màu cạnh đã đi
 			prePlace = stack.get(stack.size() - 2);
 			v[prePlace].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 			v[prePlace].setAttribute("ui.label", Integer.toString(prePlace));
@@ -151,7 +151,7 @@ public class OnMyWay2 extends GraphLinkedList{
 			stack.remove(stack.size() - 1);
 			place = stack.get(stack.size() - 1);
 		}
-		else if ((stack.size() == 1)) {
+		else if ((stack.size() == 1)) { // nếu chỉ có 1 đỉnh thì ta chỉ cần bỏ tô màu đỉnh đó và làm rỗng stack, edgeStack, vertexStack 
 			visited[place] = false;
 			stack.clear();
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
@@ -174,7 +174,7 @@ public class OnMyWay2 extends GraphLinkedList{
 			vertexStack.clear();
 		}
 	}
-	private boolean isAdjacent(int a, int b) {
+	private boolean isAdjacent(int a, int b) { // kiểm tra xem cạnh ab có đường đi không
 		for (int i: adjLists[a]) {
 			if (i == b) {
 				return true;
@@ -183,14 +183,14 @@ public class OnMyWay2 extends GraphLinkedList{
 		return false;
 	}
 	
-	public JPanel getViewer() {
+	public JPanel getViewer() { //cập nhật đồ thị mới vào frame
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         JPanel view = (JPanel) viewer.addDefaultView(false);
         return view;
 	}
 	
-	public ArrayList<Integer> getVertex() {
+	public ArrayList<Integer> getVertex() { //cập nhật các đỉnh có thể đi từ đỉnh đang đứng
 		vertex.clear();
 		if(stack.size() > 0) {
 		ite = adjLists[place].iterator();
@@ -210,7 +210,7 @@ public class OnMyWay2 extends GraphLinkedList{
 		return vertex;
 	}
 	
-	private boolean isVisited(String edge) {
+	private boolean isVisited(String edge) { // kiểm tra xem cạnh đc đi chưa
 		for (String i: stack2) {
 			if (edge.equals(i))
 				return true;
@@ -218,7 +218,7 @@ public class OnMyWay2 extends GraphLinkedList{
 		return false;
 	}
 	public LinkedList<Integer> getPlaceAdj(){
-		return adjLists[place];
+		return adjLists[place]; // nhận mảng của các phần tử mà đỉnh place có thể đi
 	}
 }
 
