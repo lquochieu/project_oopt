@@ -17,7 +17,7 @@ public class MyGraph {
     HashMap<String, Integer> count = new HashMap<>(); // Count the times of edge that went
     int vertex = 0;
     int edge = 0;
-    boolean[] flag;   // Đánh dấu DFS
+    //boolean[] flag;   // Đánh dấu DFS
 
     public MyGraph() { }
 
@@ -44,15 +44,17 @@ public class MyGraph {
             adjacencyGraph.get(x).add(y);
         }
 
+        /*
         // Khởi tạo cho DFS
         flag = new boolean[vertex+1];
         for (int i = 1; i <= vertex; ++i) flag[i] = false;
         for (int i = 1; i <= vertex; ++i) {
             ArrayList<Integer> arrayList = new ArrayList<>();
             allPath.put(i, arrayList);
-        }
+        }*/
     }
 
+    /*
     public void DFS(int u) {
         currentPath.add(u);
         flag[u] = true;
@@ -75,7 +77,7 @@ public class MyGraph {
                 flag[v] = false;
             }
         }
-    }
+    }*/
 
     public void drawGraph() {
         System.setProperty("org.graphstream.ui", "swing");
@@ -126,6 +128,7 @@ public class MyGraph {
         }
     }
 
+    /*
     public void simulationDFS() {
         DFS(1);
         Scanner input = new Scanner(System.in);
@@ -144,14 +147,14 @@ public class MyGraph {
             if (choose == vertex) System.out.println("Congratulation");;
             u = choose;
         }
-    }
+    }*/
 
     // Ham TEST
     public static void main(String[] args) {
         MyGraph myGraph = new MyGraph();
         myGraph.inputData();
         myGraph.drawGraph();
-        //myGraph.simulation();
-        myGraph.simulationDFS();
+        myGraph.simulation();
+        //myGraph.simulationDFS();
     }
 }
