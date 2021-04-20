@@ -73,6 +73,7 @@ public class OnMyWayabc extends GraphLinkedList{
 		}
 		
 		if(i ==1 ) {
+		
 			int templace = place; // tamplace là vị trí prePlace
 			place = pl; // đỉnh hiện tại = "pl"
 			stepForward(); //tiến hành thủ tục đi tới
