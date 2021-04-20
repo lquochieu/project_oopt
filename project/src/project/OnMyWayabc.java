@@ -2,6 +2,7 @@ package project;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
@@ -17,7 +18,7 @@ import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 
-public class OnMyWay2 extends GraphLinkedList{
+public class OnMyWayabc extends GraphLinkedList{
 
 	private ArrayList<Integer> vertexStack;
 	private ArrayList<String> edgeStack;
@@ -33,9 +34,10 @@ public class OnMyWay2 extends GraphLinkedList{
 	private String b;
 	private ArrayList<Integer> vertex = new ArrayList<Integer>();
 	private LinkedList<Integer> Walked[];
+	HashMap<String, Integer> count = new HashMap<>(); // Count the times of edge that went
 	private boolean signal;
 	
-	OnMyWay2(int vertices) {
+	OnMyWayabc(int vertices) {
 		super(vertices);
 		// TODO Auto-generated constructor stub
 		Walked = new LinkedList[vertices + 1];
@@ -82,6 +84,15 @@ public class OnMyWay2 extends GraphLinkedList{
 		}
 	}
 	
+	public void tempEdgeString() {
+		for(int i = 1; i <= vertices;++i) {
+			for(int j = 0; j < adjLists[i].size(); ++j) {
+				String tempEdgeString = i + " " + adjLists[i].get(j); // tên của cạnh được chọn
+				count.put(tempEdgeString, 0);
+				
+			}
+		}
+	}
 	private void stepForward() {
 		while (vertexStack.size() != 0) {
 			int temp = vertexStack.get(0); 
@@ -103,15 +114,11 @@ public class OnMyWay2 extends GraphLinkedList{
 			visited[place] = true;
 			v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 			v[place].setAttribute("ui.label", Integer.toString(place));
+			tempEdgeString();
 		}
 		else {
 			String tempEdgeString = prePlace + " " + place; // tên của cạnh được chọn
-			
-		    if (isVisited(tempEdgeString)) {
-		    	JOptionPane.showMessageDialog(null, "Sorry, You choose this way before", null, JOptionPane.INFORMATION_MESSAGE);
-		    	signal = false;
-		    }
-		    else {// nếu cạnh chưa được đi thì ta đi và tô màu cạnh đó
+
 		    	signal = true;
 				v[prePlace].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
 				v[prePlace].setAttribute("ui.label", Integer.toString(prePlace));
@@ -121,9 +128,12 @@ public class OnMyWay2 extends GraphLinkedList{
 				v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 				v[place].setAttribute("ui.label", Integer.toString(place));
 	    		Edge edge=graph.getEdge(tempEdgeString);
-			System.out.println(prePlace + "->" + place);    
+
+                count.put(tempEdgeString,count.get(tempEdgeString)+1);
+                System.out.println(count.get(tempEdgeString));
+                if (count.get(tempEdgeString) > 1) edge.setAttribute("ui.label", count.get(tempEdgeString));
+			    System.out.println(prePlace + "->" + place);    
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
-		    }
 		}
 	}
 	
@@ -164,5 +174,11 @@ public class OnMyWay2 extends GraphLinkedList{
 	}
 	public LinkedList<Integer> getPlaceAdj(){
 		return adjLists[place]; // nhận mảng của các phần tử mà đỉnh place có thể đi
+	}
+	public String getLabel() {
+		String a = "";
+		if(stack.size() > 1) 
+			a = prePlace + "->" + place;
+		return a;
 	}
 }

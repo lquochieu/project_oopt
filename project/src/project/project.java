@@ -3,11 +3,14 @@ package project;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.ComponentOrientation;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -59,7 +62,7 @@ import org.graphstream.ui.view.camera.Camera;
 
 
 public class project {
-	private static OnMyWay2 omw;
+	private static OnMyWayabc omw;
 	private static DFS g;
 	
 	private static Graph graph;
@@ -68,12 +71,13 @@ public class project {
 	private static int[][] allIntArr;
 	private static String[] arrOfStr;
 	private static int max = 0; // file index of the last vertex
-	private static int i1, i2, i3 = 0, x = 0, y = 0, a = 0;
+	private static int i1, i2, i3 = 0, x = 0, y = 0, a = 0, y1 = 0;
 	private static Integer[] c;
 	private static int size;
 	private static JFrame welcomeFrame;
 	private static JFrame frame = new JFrame();
 	private static JPanel buttonJPanel;
+	private static JPanel showPathPanel;
 	private static SwingViewer viewer;
 	private static JPanel view;
 	private static ArrayList<Integer> vertex = new ArrayList<Integer>();
@@ -208,9 +212,9 @@ public class project {
         buttonJPanel.add(showButton);
         buttonJPanel.add(AllPAthButton);
         buttonJPanel.add(QuestionsPathButton);
-        
         buttonJPanel.setBackground(Color.orange);
         
+
         setLabel(frame);
         
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -273,10 +277,16 @@ public class project {
 	protected static void QuestionsPath() {
 		// TODO Auto-generated method stub
 		JFrame AllPathFrame = new JFrame(); // tạo 1 frame mới 
+		AllPathFrame.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
+		AllPathFrame.getContentPane().setLayout(new  GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+		GridBagConstraints cc = new GridBagConstraints();
 		JPanel vPanel = new JPanel();
+		
+		
 		JButton clearButton = new JButton("Clear"); // khôi phục lại đồ thị ban đầu
-		JButton backButton = new JButton("Back"); // quay lại đỉnh đã đi qua
 		JButton btnNewButton = new JButton("Menu"); // quay lại frame chọn bài
+		JButton stopButton = new JButton("Stop"); // stop simulation graph
 		btnNewButton.setBounds(10, 10, 208, 29);
 		btnNewButton.setBackground(Color.CYAN);
 		btnNewButton.addActionListener(new ActionListener() {
@@ -285,7 +295,9 @@ public class project {
 					public void run() {
 						try {
 							omw.clear();
-							console();
+							showPathPanel.removeAll();
+							y1 = 0;
+							frame.setVisible(true);
 							AllPathFrame.dispose();
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -294,18 +306,42 @@ public class project {
 				});
 			}
 		});
+		
 		vPanel.add(btnNewButton);
 		vPanel.add(clearButton);
-		vPanel.add(backButton);
+		vPanel.add(stopButton);
 		JButton[] vButtons = new JButton[max]; // tạo các button với vButtons[i] là đỉnh thứ i
 		for(int i = 0; i < max; ++i) {
 			vButtons[i] = new JButton(Integer.toString(i+1));
 			vPanel.add(vButtons[i]);
 		}
-		
 		vPanel.setForeground(Color.GREEN);
 		
-		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+        showPathPanel = new JPanel();
+        showPathPanel.setSize(400, 750);
+        
+        cc.fill = GridBagConstraints.BOTH;
+        cc.weightx = 0.5;
+        cc.gridwidth = 2;
+		cc.gridheight = 8;
+		cc.gridx = 1;
+		cc.gridy = 0;
+        cc.anchor = GridBagConstraints.CENTER;
+        c.fill = GridBagConstraints.BOTH;
+		c.weightx = 0.5;
+		c.gridwidth = 2;
+		c.gridheight = 8;
+		c.gridx = 0;
+		c.gridy = 0;
+		
+        AllPathFrame.getContentPane().add(showPathPanel, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridwidth = 2;
+		c.gridheight = 1;
+		c.gridx = 0;
+		c.gridy = 100;
+		c.anchor = GridBagConstraints.PAGE_END;
+		AllPathFrame.getContentPane().add(vPanel, c);
 		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -316,7 +352,7 @@ public class project {
 				omw.clear();
 			}
 		});
-		setLabel(AllPathFrame); // hiển thị label của frame
+
 		
 		getView(AllPathFrame);
 		
@@ -342,9 +378,7 @@ public class project {
 										vPanel.remove(vButtons[j]);
 									}
 								}*/
-								if (!omw.getSignal()) {
-									
-								}
+								
 								
 								aIntegers = omw.getPlaceAdj();
 								for(int j = 0; j < max; ++j) {
@@ -352,10 +386,11 @@ public class project {
 										vPanel.remove(vButtons[j]);
 									}
 								}
-								AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+								AllPathFrame.getContentPane().add(vPanel, c);
 								AllPathFrame.getContentPane().remove(view);
 								view = omw.getViewer();
-								AllPathFrame.add(view);
+								
+								AllPathFrame.getContentPane().add(view, cc);
 								AllPathFrame.pack();
 								AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 								AllPathFrame.setVisible(true);
@@ -371,58 +406,27 @@ public class project {
 			
 		}
 		
-		backButton.addActionListener(new ActionListener() { // quay lại đỉnh trước đó
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				try {
-					omw.addOption(0, i3);
-					for(int j = 0; j < max; ++j) {
-						if(vertex.contains(j+1)) {
-							vPanel.remove(vButtons[j]);
-						}
-							vPanel.add(vButtons[j]);
-
-					}
-					vertex = omw.getVertex();
-					for(int j = 0; j < max; ++j) {
-						if(!vertex.contains(j+1)) {
-							vPanel.remove(vButtons[j]);
-						}
-					}
-					vPanel.repaint();
-					AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
-					AllPathFrame.getContentPane().remove(view);
-					view = omw.getViewer();
-					AllPathFrame.add(view);
-					AllPathFrame.pack();
-					AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-					AllPathFrame.setVisible(true);
-					frame.dispose();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			}
-		});
+	
 		clearButton.addActionListener(new ActionListener() { // khôi phục lại đồ thị
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				omw.clear();
+				showPathPanel.removeAll();
+				y1 = 0;
 				for(int j = 0; j < max; ++j) {
 					if(vertex.contains(j+1)) {
 						vPanel.remove(vButtons[j]);
 					}
 					vPanel.add(vButtons[j]);
 				}
+				
 				vPanel.repaint();
-				AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
+				AllPathFrame.getContentPane().add(vPanel, c);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
-				AllPathFrame.add(view);
+				AllPathFrame.add(view, cc);
 				AllPathFrame.pack();
 				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 				AllPathFrame.setVisible(true);
@@ -430,7 +434,28 @@ public class project {
 			}
 		});
 		
-		
+		stopButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				aIntegers = omw.getPlaceAdj();
+				for(int j = 0; j < max; ++j) {
+					if(aIntegers.contains(j+1)) { // những đỉnh nào mà không kề với đỉnh hiện tại sẽ xóa các button của các đỉnh đó đi
+						vPanel.remove(vButtons[j]);
+					}
+				}
+				vPanel.repaint();
+				AllPathFrame.getContentPane().add(vPanel, c);
+				AllPathFrame.getContentPane().remove(view);
+				view = omw.getViewer();
+				AllPathFrame.add(view, cc);
+				AllPathFrame.pack();
+				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+				AllPathFrame.setVisible(true);
+				frame.dispose();
+			}
+		});
 		AllPathFrame.pack();
 		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setVisible(true);
@@ -452,7 +477,7 @@ public class project {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
-							console();
+							frame.setVisible(true);
 							AllPathFrame.dispose();
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -608,7 +633,7 @@ public class project {
         /////////////////////////////////////
         /////////////////////////////////////
         //g: save data of graph
-        omw = new OnMyWay2(max); //thêm các cạnh vào để chạy thuật toán bài 3
+        omw = new OnMyWayabc(max); //thêm các cạnh vào để chạy thuật toán bài 3
         for (int i = 0; i < size; i++) {
         	for (int j = 1; j < allIntArr[i].length; j++) {
         		omw.addEdge(allIntArr[i][0], allIntArr[i][j]);
@@ -642,6 +667,7 @@ public class project {
     	viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
         viewer.enableAutoLayout();
         view = (JPanel) viewer.addDefaultView(false);
+        view.setSize(new Dimension(500, 750));
         frame.getContentPane().add(view);
     }
 	

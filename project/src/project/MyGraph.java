@@ -1,6 +1,8 @@
+package project;
+
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.SingleGraph;
-import scala.Int;
+
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,7 +25,7 @@ public class MyGraph {
 
     public void inputData() {
         Scanner input = null;
-        File file = new File("D:\\Programming language\\Java\\Project Practice OOP\\MainGraphProject\\src\\main\\java\\data.txt");
+        File file = new File("output.txt");
         try {
             input = new Scanner(file);
         } catch (FileNotFoundException e) {
@@ -40,7 +42,7 @@ public class MyGraph {
             int x = input.nextInt();  //Integer.parseInt(input.nextLine());
             int y = input.nextInt();  //Integer.parseInt(input.nextLine());
             String s = String.valueOf(x) + String.valueOf(y);
-            count.put(s,0);
+            count.put(s, 0);
             adjacencyGraph.get(x).add(y);
         }
 
