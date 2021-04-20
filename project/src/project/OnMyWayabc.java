@@ -128,11 +128,8 @@ public class OnMyWayabc extends GraphLinkedList{
 				v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 				v[place].setAttribute("ui.label", Integer.toString(place));
 	    		Edge edge=graph.getEdge(tempEdgeString);
-
                 count.put(tempEdgeString,count.get(tempEdgeString)+1);
-                System.out.println(count.get(tempEdgeString));
                 if (count.get(tempEdgeString) > 1) edge.setAttribute("ui.label", count.get(tempEdgeString));
-			    System.out.println(prePlace + "->" + place);    
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
 		}
 	}
@@ -175,10 +172,10 @@ public class OnMyWayabc extends GraphLinkedList{
 	public LinkedList<Integer> getPlaceAdj(){
 		return adjLists[place]; // nhận mảng của các phần tử mà đỉnh place có thể đi
 	}
-	public String getLabel() {
+	public String getLabel() { // hiện thị đường đi vào văn bản và số lần đã đi qua cạnh đó
 		String a = "";
 		if(stack.size() > 1) 
-			a = prePlace + "->" + place;
+			a = prePlace + "->" + place + " (" + count.get(prePlace + " " + place) + ")\n";
 		return a;
 	}
 }

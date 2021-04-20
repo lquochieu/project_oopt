@@ -41,6 +41,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
@@ -77,7 +79,6 @@ public class project {
 	private static JFrame welcomeFrame;
 	private static JFrame frame = new JFrame();
 	private static JPanel buttonJPanel;
-	private static JPanel showPathPanel;
 	private static SwingViewer viewer;
 	private static JPanel view;
 	private static ArrayList<Integer> vertex = new ArrayList<Integer>();
@@ -223,7 +224,7 @@ public class project {
         frame.setForeground(Color.YELLOW);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         getView(frame);
-        
+        frame.getContentPane().add(view);
         homeButton.addActionListener(new ActionListener() {
 			
 			@Override
@@ -276,11 +277,18 @@ public class project {
 	/// bài 3
 	protected static void QuestionsPath() {
 		// TODO Auto-generated method stub
-		JFrame AllPathFrame = new JFrame(); // tạo 1 frame mới 
+		JFrame AllPathFrame = new JFrame("Bai3"); // tạo 1 frame mới 
 		AllPathFrame.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
 		AllPathFrame.getContentPane().setLayout(new  GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-		GridBagConstraints cc = new GridBagConstraints();
+		GridBagConstraints c = new GridBagConstraints(); // gridbag of button
+		GridBagConstraints gc = new GridBagConstraints();// gridbag of graph
+		GridBagConstraints sc = new GridBagConstraints();// gridbag of scroll
+		
+		JScrollPane showPathScroll = new JScrollPane();
+		JTextArea pathTxt = new JTextArea();
+		showPathScroll.setViewportView(pathTxt);
+		
+		pathTxt.setText("Edge has passed:\n");
 		JPanel vPanel = new JPanel();
 		
 		
@@ -295,7 +303,7 @@ public class project {
 					public void run() {
 						try {
 							omw.clear();
-							showPathPanel.removeAll();
+							pathTxt.setText("Edge has passed:\n");
 							y1 = 0;
 							frame.setVisible(true);
 							AllPathFrame.dispose();
@@ -307,7 +315,7 @@ public class project {
 			}
 		});
 		
-		vPanel.add(btnNewButton);
+		
 		vPanel.add(clearButton);
 		vPanel.add(stopButton);
 		JButton[] vButtons = new JButton[max]; // tạo các button với vButtons[i] là đỉnh thứ i
@@ -317,30 +325,33 @@ public class project {
 		}
 		vPanel.setForeground(Color.GREEN);
 		
-        showPathPanel = new JPanel();
-        showPathPanel.setSize(400, 750);
+       
+        gc.fill = GridBagConstraints.BOTH; // mở rộng panel cho khít với khoảng trống với cả chiều rộng và chiều cao
+        gc.weightx = 0.5; // khoảng cách tương đối giữa các đối tượng
+		gc.gridx = 1; // tọa độ (x, y) = 1, 1
+		gc.gridy = 1;
+		gc.ipady = 750; // mở rộng theo chiều dọc cả trên và dưới 
+        gc.anchor = GridBagConstraints.EAST; // vị trí tương đối của panel trong tọa độ đó
         
-        cc.fill = GridBagConstraints.BOTH;
-        cc.weightx = 0.5;
-        cc.gridwidth = 2;
-		cc.gridheight = 8;
-		cc.gridx = 1;
-		cc.gridy = 0;
-        cc.anchor = GridBagConstraints.CENTER;
-        c.fill = GridBagConstraints.BOTH;
-		c.weightx = 0.5;
-		c.gridwidth = 2;
-		c.gridheight = 8;
+        sc.fill = GridBagConstraints.BOTH;
+        sc.weightx = 0.5;
+        sc.gridx = 0;
+        sc.gridy = 1;
+        sc.ipady = 750;
+        sc.anchor = GridBagConstraints.WEST;
+        
+        
+        c.weightx = 0.5;
 		c.gridx = 0;
-		c.gridy = 0;
+		c.gridy = 2;
 		
-        AllPathFrame.getContentPane().add(showPathPanel, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.gridwidth = 2;
-		c.gridheight = 1;
-		c.gridx = 0;
-		c.gridy = 100;
+		
+		AllPathFrame.getContentPane().add(btnNewButton, c);
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridwidth = 2;
+		c.gridx = 1;
 		c.anchor = GridBagConstraints.PAGE_END;
+		AllPathFrame.getContentPane().add(showPathScroll, sc);
 		AllPathFrame.getContentPane().add(vPanel, c);
 		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -349,13 +360,15 @@ public class project {
 		AllPathFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) { // khi frame đóng, khôi phục lại đồ thị như ban đầu
 				AllPathFrame.dispose();
+				frame.setVisible(true);
+				pathTxt.setText("Edge has passed:\n");
 				omw.clear();
 			}
 		});
 
 		
 		getView(AllPathFrame);
-		
+		AllPathFrame.getContentPane().add(view, gc);
 
 		for(int i = 0; i < max; ++i) {
 			vButtons[i].addActionListener(new ActionListener() {
@@ -386,11 +399,14 @@ public class project {
 										vPanel.remove(vButtons[j]);
 									}
 								}
+								vPanel.repaint();
+								String a = omw.getLabel();
+								pathTxt.setText(pathTxt.getText() + a);
 								AllPathFrame.getContentPane().add(vPanel, c);
 								AllPathFrame.getContentPane().remove(view);
 								view = omw.getViewer();
 								
-								AllPathFrame.getContentPane().add(view, cc);
+								AllPathFrame.getContentPane().add(view, gc);
 								AllPathFrame.pack();
 								AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 								AllPathFrame.setVisible(true);
@@ -413,7 +429,6 @@ public class project {
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
 				omw.clear();
-				showPathPanel.removeAll();
 				y1 = 0;
 				for(int j = 0; j < max; ++j) {
 					if(vertex.contains(j+1)) {
@@ -421,12 +436,12 @@ public class project {
 					}
 					vPanel.add(vButtons[j]);
 				}
-				
+				pathTxt.setText("Edge has passed:\n");
 				vPanel.repaint();
 				AllPathFrame.getContentPane().add(vPanel, c);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
-				AllPathFrame.add(view, cc);
+				AllPathFrame.add(view, gc);
 				AllPathFrame.pack();
 				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 				AllPathFrame.setVisible(true);
@@ -449,7 +464,7 @@ public class project {
 				AllPathFrame.getContentPane().add(vPanel, c);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
-				AllPathFrame.add(view, cc);
+				AllPathFrame.add(view, gc);
 				AllPathFrame.pack();
 				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 				AllPathFrame.setVisible(true);
@@ -510,7 +525,7 @@ public class project {
 		AllPathFrame.setVisible(true);
 		frame.dispose();
 		getView(AllPathFrame);
-		
+		AllPathFrame.getContentPane().add(view);
 		c[0] = 0;
 		for(int i = 0; i < max; ++i) {
 			c[i + 1] = 0;
@@ -668,7 +683,7 @@ public class project {
         viewer.enableAutoLayout();
         view = (JPanel) viewer.addDefaultView(false);
         view.setSize(new Dimension(500, 750));
-        frame.getContentPane().add(view);
+        
     }
 	
 	
