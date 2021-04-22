@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.LineBorder;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -132,8 +133,8 @@ public class project {
 		dirPanel.add(dirText);
 		dirPanel.add(finishButton);
 		dirPanel.add(directoryButton);
-		
-		JFileChooser fileDialog = new JFileChooser(); //xử lý việc chọn directory
+		String curentDir = System.getProperty("user.dir");
+		JFileChooser fileDialog = new JFileChooser(curentDir + "\\DataGraph"); //xử lý việc chọn directory
 		
 		directoryButton.addActionListener(new ActionListener() {
 			
@@ -291,7 +292,8 @@ public class project {
 		pathTxt.setText("Edge has passed:\n");
 		JPanel vPanel = new JPanel();
 		
-		
+		JScrollPane vPanelScoll = new JScrollPane(vPanel);
+		vPanelScoll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
 		JButton clearButton = new JButton("Clear"); // khôi phục lại đồ thị ban đầu
 		JButton btnNewButton = new JButton("Menu"); // quay lại frame chọn bài
 		JButton stopButton = new JButton("Stop"); // stop simulation graph
@@ -344,7 +346,7 @@ public class project {
         c.weightx = 0.5;
 		c.gridx = 0;
 		c.gridy = 2;
-		
+		c.ipady = 40;
 		
 		AllPathFrame.getContentPane().add(btnNewButton, c);
 		c.fill = GridBagConstraints.HORIZONTAL;
@@ -352,7 +354,8 @@ public class project {
 		c.gridx = 1;
 		c.anchor = GridBagConstraints.PAGE_END;
 		AllPathFrame.getContentPane().add(showPathScroll, sc);
-		AllPathFrame.getContentPane().add(vPanel, c);
+
+		AllPathFrame.getContentPane().add(vPanelScoll, c);
 		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -402,7 +405,7 @@ public class project {
 								vPanel.repaint();
 								String a = omw.getLabel();
 								pathTxt.setText(pathTxt.getText() + a);
-								AllPathFrame.getContentPane().add(vPanel, c);
+								AllPathFrame.getContentPane().add(vPanelScoll, c);
 								AllPathFrame.getContentPane().remove(view);
 								view = omw.getViewer();
 								
@@ -438,7 +441,7 @@ public class project {
 				}
 				pathTxt.setText("Edge has passed:\n");
 				vPanel.repaint();
-				AllPathFrame.getContentPane().add(vPanel, c);
+				AllPathFrame.getContentPane().add(vPanelScoll, c);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
 				AllPathFrame.add(view, gc);
@@ -461,7 +464,7 @@ public class project {
 					}
 				}
 				vPanel.repaint();
-				AllPathFrame.getContentPane().add(vPanel, c);
+				AllPathFrame.getContentPane().add(vPanelScoll, c);
 				AllPathFrame.getContentPane().remove(view);
 				view = omw.getViewer();
 				AllPathFrame.add(view, gc);
@@ -606,7 +609,6 @@ public class project {
         	} 
             bufReader.close();
         } catch (IOException e) {
-            e.printStackTrace();
         }
     
         size = listOfLines.size(); // số dòng trong file
