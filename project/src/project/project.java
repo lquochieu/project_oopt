@@ -50,11 +50,15 @@ import javax.swing.border.LineBorder;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.stream.ProxyPipe;
 import org.graphstream.stream.file.FileSinkImages;
 import org.graphstream.stream.file.FileSinkImages.LayoutPolicy;
 import org.graphstream.stream.file.FileSinkImages.OutputPolicy;
 import org.graphstream.stream.file.FileSinkImages.OutputType;
 import org.graphstream.stream.file.images.Resolutions;
+import org.graphstream.ui.layout.Layout;
+import org.graphstream.ui.layout.Layouts;
+import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
@@ -219,12 +223,10 @@ public class project {
 
         setLabel(frame);
         
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.getContentPane().add(buttonJPanel, BorderLayout.SOUTH);
         frame.setTitle("Project OOPT");
         frame.setForeground(Color.YELLOW);
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        getView(frame);
         frame.getContentPane().add(view);
         homeButton.addActionListener(new ActionListener() {
 			
@@ -270,6 +272,7 @@ public class project {
 							}
 		});
         frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         frame.setVisible(true);
 	}
 	
@@ -291,14 +294,25 @@ public class project {
 		
 		pathTxt.setText("Edge has passed:\n");
 		JPanel vPanel = new JPanel();
-		
+		JPanel nPanel = new JPanel();
 		JScrollPane vPanelScoll = new JScrollPane(vPanel);
 		vPanelScoll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		
 		JButton clearButton = new JButton("Clear"); // khôi phục lại đồ thị ban đầu
 		JButton btnNewButton = new JButton("Menu"); // quay lại frame chọn bài
 		JButton stopButton = new JButton("Stop"); // stop simulation graph
 		btnNewButton.setBounds(10, 10, 208, 29);
 		btnNewButton.setBackground(Color.CYAN);
+		JLabel nodeLabel = new JLabel("Enter node");
+		JTextField nodeText = new JTextField(3);
+		JButton fishButton = new JButton("Finish");
+		nPanel.add(btnNewButton);
+		nPanel.add(clearButton);
+		nPanel.add(stopButton);
+		nPanel.add(nodeLabel);
+		nPanel.add(nodeText);
+		nPanel.add(fishButton);
+		
 		btnNewButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				EventQueue.invokeLater(new Runnable() {
@@ -307,6 +321,9 @@ public class project {
 							omw.clear();
 							pathTxt.setText("Edge has passed:\n");
 							y1 = 0;
+							frame.getContentPane().add(view);
+							AllPathFrame.repaint();
+							AllPathFrame.revalidate();
 							frame.setVisible(true);
 							AllPathFrame.dispose();
 						} catch (Exception e) {
@@ -318,13 +335,62 @@ public class project {
 		});
 		
 		
-		vPanel.add(clearButton);
-		vPanel.add(stopButton);
 		JButton[] vButtons = new JButton[max]; // tạo các button với vButtons[i] là đỉnh thứ i
 		for(int i = 0; i < max; ++i) {
 			vButtons[i] = new JButton(Integer.toString(i+1));
 			vPanel.add(vButtons[i]);
 		}
+		
+        fishButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				if(graph.getNode(nodeText.getText()) == null) {
+					JOptionPane.showMessageDialog(null, "Can't find node " + nodeText.getText(), "ERROR", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+					try {
+						omw.addOption(1, Integer.parseInt(nodeText.getText()));
+					}  catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} // đi tới đỉnh đó
+					for(int j = 0; j < max; ++j) { // khôi phục lại các buton, để khi xóa các button ta sẽ có các button được xếp sếp theo thứ tự tăng dần
+						
+						vPanel.add(vButtons[j]);
+					}
+					/*vertex = omw.getVertex();
+					for(int j = 0; j < max; ++j) {
+						if(!vertex.contains(j+1)) {
+							vPanel.remove(vButtons[j]);
+						}
+					}*/
+					
+					
+					aIntegers = omw.getPlaceAdj();
+					for(int j = 0; j < max; ++j) {
+						if(!aIntegers.contains(j+1)) { // những đỉnh nào mà không kề với đỉnh hiện tại sẽ xóa các button của các đỉnh đó đi
+							vPanel.remove(vButtons[j]);
+						}
+					}
+					vPanel.repaint();
+					String a = omw.getLabel();
+					pathTxt.setText(pathTxt.getText() + a);
+					AllPathFrame.getContentPane().add(vPanelScoll, c);
+					AllPathFrame.getContentPane().remove(view);
+//					view = omw.getViewer();
+					
+					AllPathFrame.getContentPane().add(view, gc);
+					AllPathFrame.repaint();
+					AllPathFrame.revalidate();
+//					AllPathFrame.pack();
+//					AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//					AllPathFrame.setVisible(true);
+					frame.dispose();
+				}
+			}
+		});
 		vPanel.setForeground(Color.GREEN);
 		
        
@@ -343,12 +409,12 @@ public class project {
         sc.anchor = GridBagConstraints.WEST;
         
         
-        c.weightx = 0.5;
 		c.gridx = 0;
 		c.gridy = 2;
+		c.ipadx = 30; 
 		c.ipady = 40;
 		
-		AllPathFrame.getContentPane().add(btnNewButton, c);
+		AllPathFrame.getContentPane().add(nPanel, c);
 		c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridwidth = 2;
 		c.gridx = 1;
@@ -362,15 +428,17 @@ public class project {
 		
 		AllPathFrame.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent windowEvent) { // khi frame đóng, khôi phục lại đồ thị như ban đầu
-				AllPathFrame.dispose();
-				frame.setVisible(true);
+//				AllPathFrame.dispose();
+//				frame.setVisible(true);
+			
 				pathTxt.setText("Edge has passed:\n");
 				omw.clear();
+				AllPathFrame.repaint();
+				AllPathFrame.revalidate();
 			}
 		});
 
 		
-		getView(AllPathFrame);
 		AllPathFrame.getContentPane().add(view, gc);
 
 		for(int i = 0; i < max; ++i) {
@@ -407,12 +475,14 @@ public class project {
 								pathTxt.setText(pathTxt.getText() + a);
 								AllPathFrame.getContentPane().add(vPanelScoll, c);
 								AllPathFrame.getContentPane().remove(view);
-								view = omw.getViewer();
+//								view = omw.getViewer();
 								
 								AllPathFrame.getContentPane().add(view, gc);
-								AllPathFrame.pack();
-								AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-								AllPathFrame.setVisible(true);
+								AllPathFrame.repaint();
+								AllPathFrame.revalidate();
+//								AllPathFrame.pack();
+//								AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//								AllPathFrame.setVisible(true);
 								frame.dispose();
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
@@ -443,11 +513,13 @@ public class project {
 				vPanel.repaint();
 				AllPathFrame.getContentPane().add(vPanelScoll, c);
 				AllPathFrame.getContentPane().remove(view);
-				view = omw.getViewer();
+//				view = omw.getViewer();
 				AllPathFrame.add(view, gc);
-				AllPathFrame.pack();
-				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-				AllPathFrame.setVisible(true);
+				AllPathFrame.repaint();
+				AllPathFrame.revalidate();
+//				AllPathFrame.pack();
+//				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//				AllPathFrame.setVisible(true);
 				frame.dispose();
 			}
 		});
@@ -466,11 +538,13 @@ public class project {
 				vPanel.repaint();
 				AllPathFrame.getContentPane().add(vPanelScoll, c);
 				AllPathFrame.getContentPane().remove(view);
-				view = omw.getViewer();
+//				view = omw.getViewer();
 				AllPathFrame.add(view, gc);
-				AllPathFrame.pack();
-				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
-				AllPathFrame.setVisible(true);
+				AllPathFrame.repaint();
+				AllPathFrame.revalidate();
+//				AllPathFrame.pack();
+//				AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+//				AllPathFrame.setVisible(true);
 				frame.dispose();
 			}
 		});
@@ -486,7 +560,6 @@ public class project {
 		 c = new Integer[max + 1];
 		JFrame AllPathFrame = new JFrame();
 		JPanel vPanel = new JPanel();
-		JButton[] vButtons = new JButton[max];
 		JButton btnNewButton = new JButton("Menu");
 		btnNewButton.setBounds(10, 10, 208, 29);
 		btnNewButton.setBackground(Color.CYAN);
@@ -506,13 +579,38 @@ public class project {
 		});
 		btnNewButton.setFont(new Font("Times New Roman", Font.BOLD, 18));
 		vPanel.add(btnNewButton);
-		for(int i = 0; i < max; ++i) {
-			vButtons[i] = new JButton(Integer.toString(i+1));
-			vPanel.add(vButtons[i]);
-		}
-		
-		vPanel.setForeground(Color.GREEN);
-		
+		JLabel nodeLabel1 = new JLabel("Enter node 1st");
+		JLabel nodeLabel2 = new JLabel("Enter node 2nd");
+		JTextField nodeText1 = new JTextField(3);
+		JTextField nodeText2 = new JTextField(3);
+		JButton finishButton = new JButton("Finish");
+		vPanel.add(nodeLabel1);
+		vPanel.add(nodeText1);
+		vPanel.add(nodeLabel2);
+		vPanel.add(nodeText2);
+		vPanel.add(finishButton);
+		finishButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				String t1 = nodeText1.getText(), t2 = nodeText2.getText(); 
+				if(graph.getNode(t1) == null || graph.getNode(t2) == null) {
+					if(graph.getNode(t1) == null && graph.getNode(t2) != null) {
+						JOptionPane.showMessageDialog(null, "Can't find node" + t1 + "!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+					else if(graph.getNode(t2) == null && graph.getNode(t1) != null) {
+						JOptionPane.showMessageDialog(null, "Can't find node" + t2 + "!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+					else {
+						JOptionPane.showMessageDialog(null, "Can't find node" + t1 + " " + t2 + "!", "ERROR", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else {
+					g.runDFS(Integer.parseInt(t1) , Integer.parseInt(t2), "path between vertex " + t1 + " and vertex " +t2 );
+				}
+			}
+		});
 		AllPathFrame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
 		AllPathFrame.getContentPane().add(vPanel, BorderLayout.SOUTH);
 		frame.setExtendedState(JFrame.MAXIMIZED_BOTH); 
@@ -527,63 +625,17 @@ public class project {
 		AllPathFrame.pack();
 		AllPathFrame.setVisible(true);
 		frame.dispose();
-		getView(AllPathFrame);
 		AllPathFrame.getContentPane().add(view);
-		c[0] = 0;
-		for(int i = 0; i < max; ++i) {
-			c[i + 1] = 0;
-			vButtons[i].addActionListener(new ActionListener() {
-				
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					// TODO Auto-generated method stub
-					for(int i = 1; i <= max; ++i) {
-						if(e.getActionCommand().equals(Integer.toString(i))) {
-							// đây là thuật toán để khi nhấn 2 đỉnh khác nhau liên tiếp sẽ in tất cả các đường đi giữa 2 đỉnh đó
-							//nếu nhấn 1 đỉnh nhiều lần liên tiếp sẽ chỉ tính 1 lần
-							
-							if(a == 0) {
-									c[i] = 1;
-									i1 = i;
-									y = 0;
-									a++;
-									a = a%2;
-								
-							}
-							else {
-								if(c[i] == 0) {
-									c[i] = 1;
-									i2 = i;
-									x = 0;
-									a++;
-									a = a%2;
-								}
-							}
-						}
-						
-					}
-					if(i2 != 0) {
-					for(int i = 1; i <= max; ++i) {
-						for(int j = 1; j <= max; ++j) {
-							if(c[i1] == 1 && c[i2] == 1) {
-								g.runDFS(i1 , i2, "path between vertex " + i1 + " and vertex " +i2 );
-								c[i1] = 0;
-								c[i2] = 0;
-								i1 = 0;
-								i2 = 0;
-							}
-						}
-					}
-					}
-				}
-			});
-		}
+		
 	}
 	
 	
 	public static void prepare() throws IOException { // đọc file, xử lý để in ra đồ thị từ file đó
-		System.setProperty("org.graphstream.ui", "swing");
+		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swing.util.Display");
 		graph = new SingleGraph("Project");
+		graph.setAttribute( "ui.stylesheet", styleSheet );
+		graph.setAttribute( "ui.antialias" );
+		graph.setAttribute( "ui.quality" );
 		graph.setStrict(false);
 		graph.setAutoCreate( true );
 		
@@ -658,15 +710,18 @@ public class project {
         }
         omw.runner();
         
-        Node[] e = new Node[max];
-        for(int i = 0; i < max; ++i) {
-
-        	graph.addNode(Integer.toString(i+1));
-        	e[i] = graph.getNode(Integer.toString(i+1));
-        	e[i].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
-    		e[i].setAttribute("ui.label", Integer.toString(i+1)); 
-        }
+        Node[] e = new Node[max+1];
         
+        for(int i = 1; i <= max; ++i) {
+
+        	graph.addNode(Integer.toString(i));
+        	e[i] = graph.getNode(Integer.toString(i));
+        	e[i].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
+    		e[i].setAttribute("ui.label", Integer.toString(i)); 
+    		
+        }
+    	view = omw.getViewer();
+    	
 	}
 	// đây là đặt nhãn dán cho 1 frame bất kỳ ở phía trên cùng của frame
 		public static void setLabel(JFrame frame) {
@@ -678,16 +733,42 @@ public class project {
 	      
 	        frame.add(showGraphLabel, BorderLayout.NORTH);
 		}
-		
-	// chèn đồ thị vào frame
-	public static void getView(JFrame frame) {
-    	viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        viewer.enableAutoLayout();
-        view = (JPanel) viewer.addDefaultView(false);
-        view.setSize(new Dimension(500, 750));
-        
-    }
 	
-	
+	public static String styleSheet = 
+ 			"graph {"+
+			"	canvas-color: black;"+
+			"		fill-mode: gradient-vertical;"+
+			"		fill-color: black, #004;"+
+			"		padding: 60px;"+
+			"	}"+
+			"node {"+
+			"	shape: circle;"+
+			"	size: 14px;"+
+			"	fill-mode: gradient-radial;"+
+			"	fill-color: #FFFA, #FFF0;"+
+			"	stroke-mode: none;"+
+			"	shadow-mode: gradient-radial;"+
+			"	shadow-color: #FFF9, #FFF0;"+
+			"	shadow-width: 10px;"+
+			"	shadow-offset: 0px, 0px;"+
+			"}"+
+			"node:clicked {"+
+			"	fill-color: #F00A, #F000;"+
+			"}"+
+			"node:selected {"+
+			"	fill-color: #00FA, #00F0;"+
+			"}"+
+			"edge {"+
+			"	shape: line;"+
+			"	size: 1px;"+
+			"	fill-color: #FFF3;"+
+			"	fill-mode: plain;"+
+			"	arrow-shape: none;"+
+			"}"+
+			"sprite {"+
+			"	shape: circle;"+
+			"	fill-mode: gradient-radial;"+
+			"	fill-color: #FFF8, #FFF0;"+
+			"}";
 
 }

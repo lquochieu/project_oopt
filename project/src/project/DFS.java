@@ -33,7 +33,6 @@ public class DFS extends GraphLinkedList{
 	    
 	    //Print results
 	    if (vertex == end) {
-	    	graph = new SingleGraph("Use");
 	    	graphDraw();
 	    	count++;
 	    	for (int i = 0; i < stack.size(); ++i) {
@@ -51,8 +50,6 @@ public class DFS extends GraphLinkedList{
 	    		Edge edge=graph.getEdge(a + " " + b);
 	    		edge.setAttribute("ui.style", "fill-color: purple; size: 3px;");
 	    	}
-	    	graph.display().setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
-
 	    	 FileSinkImages pic = new SwingFileSinkImages(OutputType.PNG, Resolutions.VGA);
 			 
 			 pic.setLayoutPolicy(LayoutPolicy.COMPUTED_FULLY_AT_NEW_IMAGE);

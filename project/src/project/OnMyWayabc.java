@@ -64,11 +64,19 @@ public class OnMyWayabc extends GraphLinkedList{
 		stack2.clear();
 		vertexStack.clear();
 		edgeStack.clear();
-		graph = new SingleGraph("Use");
-    	graphDraw();
+		for(int i = 1; i <= vertices; ++i) {
+
+        	v[i] = graph.getNode(Integer.toString(i));
+        	v[i].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
+    		
+        }
 	}
 	void addOption(int i, int pl) throws IOException { // i có 2 trạng thái là 1 và 0, 1 là đi tới, 0 là đi lùi, "pl" là tên đỉnh cần tiến tới
 		if(stack.size() > 0) { //stack là mảng stack lưu các đỉnh đã ấn 
+			if(!adjLists[place].contains(pl)) {
+				JOptionPane.showMessageDialog(null, "Can't move to node " + pl, "ERROR", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 			prePlace = place; // nếu số đỉnh ở trong stack > 0, ta lưu đỉnh đã được tiến tới trước đỉnh "pl" và prePlace
 		}
 		
@@ -128,6 +136,7 @@ public class OnMyWayabc extends GraphLinkedList{
 				visited[place] = true;
 				v[place].setAttribute("ui.style", "shape:circle;fill-color: green;size: 30px;");
 				v[place].setAttribute("ui.label", Integer.toString(place));
+				
 	    		Edge edge=graph.getEdge(tempEdgeString);
                 count.put(tempEdgeString,count.get(tempEdgeString)+1);
                 if (count.get(tempEdgeString) > 1) edge.setAttribute("ui.label", count.get(tempEdgeString));
@@ -135,14 +144,16 @@ public class OnMyWayabc extends GraphLinkedList{
 		}
 	}
 	
-	
+	boolean aa = true;
 	public JPanel getViewer() { //cập nhật đồ thị mới vào frame
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-        viewer.enableAutoLayout();
+    	viewer.enableAutoLayout();
         JPanel view = (JPanel) viewer.addDefaultView(false);
         return view;
 	}
-	
+	public SingleGraph getGraph() {
+		return graph;
+	}
 	public ArrayList<Integer> getVertex() { //cập nhật các đỉnh có thể đi từ đỉnh đang đứng
 		vertex.clear();
 		if(stack.size() > 0) {

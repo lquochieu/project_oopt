@@ -84,11 +84,11 @@ class InitializeApplication extends JFrame implements Runnable {
 		graph.setAttribute( "ui.antialias" );
 		graph.setAttribute( "ui.quality" );
 		graph.setAttribute( "ui.stylesheet", styleSheet );
-   
 		graph.getNode("A").setAttribute("xyz", -1, 0, 0 );
 		graph.getNode("B").setAttribute("xyz",  1, 0, 0 );
   		graph.getNode("C").setAttribute("xyz",  0, 1, 0 );
-   
+  		Object[] xy = graph.getNode("A").getArray("xyz");
+  		System.out.println(xy[1]);
   		// On ins�re la vue principale du viewer dans la JFrame.
   		
 		add((ViewPanel) viewer.addDefaultView( false ), BorderLayout.CENTER );
