@@ -5,6 +5,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Dimension;
+import java.awt.Event;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -16,6 +17,8 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.font.TextLayout;
@@ -60,6 +63,7 @@ import org.graphstream.ui.layout.Layout;
 import org.graphstream.ui.layout.Layouts;
 import org.graphstream.ui.swing_viewer.DefaultView;
 import org.graphstream.ui.swing_viewer.SwingViewer;
+import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 import org.graphstream.ui.view.camera.Camera;
@@ -85,7 +89,7 @@ public class project {
 	private static JFrame frame = new JFrame();
 	private static JPanel buttonJPanel;
 	private static SwingViewer viewer;
-	private static JPanel view;
+	private static ViewPanel view;
 	private static ArrayList<Integer> vertex = new ArrayList<Integer>();
 	private static LinkedList<Integer> aIntegers = new LinkedList<Integer>();
 	private static ArrayList<String> hasNext=new ArrayList<>();
@@ -721,6 +725,12 @@ public class project {
     		
         }
     	view = omw.getViewer();
+    	view.addMouseWheelListener(new MouseWheelListener() {
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent mwe) {
+                project.zoomGraphMouseWheelMoved(mwe);
+            }
+        });
     	
 	}
 	// đây là đặt nhãn dán cho 1 frame bất kỳ ở phía trên cùng của frame
@@ -733,6 +743,19 @@ public class project {
 	      
 	        frame.add(showGraphLabel, BorderLayout.NORTH);
 		}
+		public static void zoomGraphMouseWheelMoved(MouseWheelEvent mwe){
+	        if (Event.ALT_MASK != 0) {            
+	            if (mwe.getWheelRotation() > 0) {
+	                double new_view_percent = view.getCamera().getViewPercent() + 0.05;
+	                view.getCamera().setViewPercent(new_view_percent);               
+	            } else if (mwe.getWheelRotation() < 0) {
+	                double current_view_percent = view.getCamera().getViewPercent();
+	                if(current_view_percent > 0.05){
+	                    view.getCamera().setViewPercent(current_view_percent - 0.05);                
+	                }
+	            }
+	        }                     
+	    }
 	
 	public static String styleSheet = 
  			"graph {"+

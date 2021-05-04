@@ -15,6 +15,7 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 import org.graphstream.ui.swing_viewer.SwingViewer;
+import org.graphstream.ui.swing_viewer.ViewPanel;
 import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.Viewer.CloseFramePolicy;
 
@@ -145,10 +146,11 @@ public class OnMyWayabc extends GraphLinkedList{
 	}
 	
 	boolean aa = true;
-	public JPanel getViewer() { //cập nhật đồ thị mới vào frame
+	public ViewPanel getViewer() { //cập nhật đồ thị mới vào frame
 		SwingViewer viewer = new SwingViewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
     	viewer.enableAutoLayout();
-        JPanel view = (JPanel) viewer.addDefaultView(false);
+        ViewPanel view = (ViewPanel) viewer.addDefaultView(false);
+        
         return view;
 	}
 	public SingleGraph getGraph() {
