@@ -62,6 +62,12 @@ public class OnMyWayabc extends GraphLinkedList{
 			visited[i] = false;
 		}
 		stack.clear();
+		
+		for (String tempEdgeString: stack2) {
+			Edge edge=graph.getEdge(tempEdgeString);
+			edge.setAttribute("ui.style", "fill-color: black; size: 1px;");
+		}
+		
 		stack2.clear();
 		vertexStack.clear();
 		edgeStack.clear();
