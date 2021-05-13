@@ -52,7 +52,7 @@ public class GraphLinkedList {
 	void graphDraw() {
 		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Use");
-		graph.setAttribute( "ui.stylesheet", styleSheet );
+		//graph.setAttribute( "ui.stylesheet", styleSheet );
 		graph.setAttribute( "ui.antialias" );
 		graph.setAttribute( "ui.quality" );
 		for (int i = 1; i <= vertices; ++i) {
