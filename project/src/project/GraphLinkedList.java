@@ -52,7 +52,6 @@ public class GraphLinkedList {
 	void graphDraw() {
 		System.setProperty("org.graphstream.ui", "swing");
 		graph = new SingleGraph("Use");
-		graph.setAttribute( "ui.stylesheet", styleSheet );
 		graph.setAttribute( "ui.antialias" );
 		graph.setAttribute( "ui.quality" );
 		for (int i = 1; i <= vertices; ++i) {
@@ -94,42 +93,7 @@ public class GraphLinkedList {
 		this.path = path;
 		graphShow();
 	}
-	private String styleSheet = 
- 			"graph {"+
-			"	canvas-color: black;"+
-			"		fill-mode: gradient-vertical;"+
-			"		fill-color: black, #004;"+
-			"		padding: 60px;"+
-			"	}"+
-			"node {"+
-			"	shape: circle;"+
-			"	size: 14px;"+
-			"	fill-mode: gradient-radial;"+
-			"	fill-color: #FFFA, #FFF0;"+
-			"	stroke-mode: none;"+
-			"	shadow-mode: gradient-radial;"+
-			"	shadow-color: #FFF9, #FFF0;"+
-			"	shadow-width: 10px;"+
-			"	shadow-offset: 0px, 0px;"+
-			"}"+
-			"node:clicked {"+
-			"	fill-color: #F00A, #F000;"+
-			"}"+
-			"node:selected {"+
-			"	fill-color: #00FA, #00F0;"+
-			"}"+
-			"edge {"+
-			"	shape: line;"+
-			"	size: 1px;"+
-			"	fill-color: #FFF3;"+
-			"	fill-mode: plain;"+
-			"	arrow-shape: none;"+
-			"}"+
-			"sprite {"+
-			"	shape: circle;"+
-			"	fill-mode: gradient-radial;"+
-			"	fill-color: #FFF8, #FFF0;"+
-			"}";
+
 }
 
 

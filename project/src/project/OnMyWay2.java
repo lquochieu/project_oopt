@@ -55,9 +55,24 @@ public class OnMyWay2 extends GraphLinkedList{
 	}
 	
 	void clear() {
+		
 		for(int i = 1; i <= vertices; ++i) {
 			visited[i] = false;
 		}
+		
+		for(int i = 0; i < stack.size(); ++i) {
+			v[stack.get(i)] = graph.getNode(Integer.toString(stack.get(i)));
+			v[stack.get(i)].setAttribute("ui.style", "shape:circle;fill-color: yellow;size: 30px;");
+		}
+		Edge edge;
+		for(int i = 0; i < stack2.size(); ++i) {
+			edge = graph.getEdge(stack2.get(i));
+			edge.setAttribute("ui.style", "fill-color: black; size: 0.8px;");
+		}
+		stack.clear();
+		stack2.clear();
+		vertexStack.clear();
+		edgeStack.clear();
 		stack.clear();
 		stack2.clear();
 		vertexStack.clear();

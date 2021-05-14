@@ -72,7 +72,7 @@ import org.graphstream.ui.view.camera.Camera;
 
 
 
-public class project {
+public class original_project {
 	private static OnMyWayabc omw;
 	private static DFS g;
 	
@@ -572,6 +572,9 @@ public class project {
 				EventQueue.invokeLater(new Runnable() {
 					public void run() {
 						try {
+							frame.getContentPane().add(view);
+							AllPathFrame.repaint();
+							AllPathFrame.revalidate();
 							frame.setVisible(true);
 							AllPathFrame.dispose();
 						} catch (Exception e) {
@@ -637,7 +640,6 @@ public class project {
 	public static void prepare() throws IOException { // đọc file, xử lý để in ra đồ thị từ file đó
 		System.setProperty("org.graphstream.ui", "org.graphstream.ui.swing.util.Display");
 		graph = new SingleGraph("Project");
-		graph.setAttribute( "ui.stylesheet", styleSheet );
 		graph.setAttribute( "ui.antialias" );
 		graph.setAttribute( "ui.quality" );
 		graph.setStrict(false);
@@ -728,7 +730,7 @@ public class project {
     	view.addMouseWheelListener(new MouseWheelListener() {
             @Override
             public void mouseWheelMoved(MouseWheelEvent mwe) {
-                project.zoomGraphMouseWheelMoved(mwe);
+                original_project.zoomGraphMouseWheelMoved(mwe);
             }
         });
     	
@@ -757,41 +759,5 @@ public class project {
 	        }                     
 	    }
 	
-	public static String styleSheet = 
- 			"graph {"+
-			"	canvas-color: black;"+
-			"		fill-mode: gradient-vertical;"+
-			"		fill-color: black, #004;"+
-			"		padding: 60px;"+
-			"	}"+
-			"node {"+
-			"	shape: circle;"+
-			"	size: 14px;"+
-			"	fill-mode: gradient-radial;"+
-			"	fill-color: #FFFA, #FFF0;"+
-			"	stroke-mode: none;"+
-			"	shadow-mode: gradient-radial;"+
-			"	shadow-color: #FFF9, #FFF0;"+
-			"	shadow-width: 10px;"+
-			"	shadow-offset: 0px, 0px;"+
-			"}"+
-			"node:clicked {"+
-			"	fill-color: #F00A, #F000;"+
-			"}"+
-			"node:selected {"+
-			"	fill-color: #00FA, #00F0;"+
-			"}"+
-			"edge {"+
-			"	shape: line;"+
-			"	size: 1px;"+
-			"	fill-color: #FFF3;"+
-			"	fill-mode: plain;"+
-			"	arrow-shape: none;"+
-			"}"+
-			"sprite {"+
-			"	shape: circle;"+
-			"	fill-mode: gradient-radial;"+
-			"	fill-color: #FFF8, #FFF0;"+
-			"}";
 
 }
